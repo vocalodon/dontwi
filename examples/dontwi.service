@@ -1,0 +1,10 @@
+[Unit]
+Description=Dontwi
+
+[Service]
+Type=simple
+ExecStart=/opt/dontwi/dontwi/dontwi.py
+WorkingDirectory=/opt/dontwi/dontwi
+
+[Install]
+WantedBy=default.target

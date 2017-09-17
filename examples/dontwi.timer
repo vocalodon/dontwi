@@ -1,0 +1,9 @@
+[Unit]
+Description=Run at each 2 min
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=2min
+
+[Install]
+WantedBy=timers.target
