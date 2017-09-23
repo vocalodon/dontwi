@@ -6,7 +6,7 @@ from enum import Enum
 from functools import reduce
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
-
+from unshortenit import unshorten
 
 class TextType(Enum):
     WORDS = 0
@@ -31,7 +31,9 @@ class StatusText(object):
 
     @staticmethod
     def count_url_characters(url):
-        return sum([len(s) for s in urlparse(url)[0:2]]) + 4
+        unshorted_uri, status = unshorten(url)
+        return sum([len(s) for s in urlparse(unshorted_uri)[0:2]]) + 3
+        # +3 means length of "://"
 
     def slice_content_and_count_len(self, status_string):
         splited_text = self.url_pattern.split(status_string)
