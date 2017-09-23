@@ -13,7 +13,8 @@
     <RootNamespace>dontwi</RootNamespace>
     <IsWindowsApplication>False</IsWindowsApplication>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
-    <CommandLineArguments> --trigger hashtag:ドリルドリルドリル --since id:2135526 --db-file _test.db --config-file a_shiomaneki_dontwi.ini</CommandLineArguments>
+    <CommandLineArguments>
+    </CommandLineArguments>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
