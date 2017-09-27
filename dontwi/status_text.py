@@ -67,9 +67,9 @@ class StatusText(object):
     @staticmethod
     def strip_html_tags(toot):
         soup = BeautifulSoup(toot.status["content"], "html.parser")
-        for a_br in soup.p.find_all("br"):
-            a_br.string = "\n"
         for a_p in soup.find_all("p"):
+            for a_br in a_p.find_all("br"):
+                a_br.string = "\n"
             if a_p.string:
                 a_p.string += "\n"
             elif a_p.text:
