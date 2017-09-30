@@ -70,10 +70,7 @@ class StatusText(object):
         for a_p in soup.find_all("p"):
             for a_br in a_p.find_all("br"):
                 a_br.string = "\n"
-            if a_p.string:
-                a_p.string += "\n"
-            elif a_p.text:
-                a_p.string = a_p.text + "\n"
+            a_p.string = a_p.text + "\n"
         status_str = ("".join(soup.strings)).rstrip("\n")
         return status_str
 
