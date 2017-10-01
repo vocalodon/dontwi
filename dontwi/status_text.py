@@ -37,6 +37,9 @@ class StatusText(object):
 
     def slice_content_and_count_len(self, status_string):
         splited_text = self.url_pattern.split(status_string)
+        for index in [0,-1]:
+            if splited_text[index] == "":
+                del splited_text[index]  
         marked_parts = [
             SplitedText(text=s, text_type=(lambda q:
                                            TextType.WORDS if not self.url_pattern.match(q)
@@ -53,15 +56,12 @@ class StatusText(object):
         return marked_parts, char_count
 
     def replace_trigger_tag(self, status_string, hashtag):
-
-        result = status_string.replace(
-            "#{0}".format(hashtag), "#{0}".format(self.federation_hashtag))
+        result = status_string.replace("#{0}".format(hashtag), "#{0}".format(self.federation_hashtag))
         return result
 
     @staticmethod
     def append_user_info(status_string, toot):
-        modified_str = "{0}\n{1}".format(
-            toot.get_user_account(), status_string)
+        modified_str = "{0}\n{1}".format(toot.get_user_account(), status_string)
         return modified_str
 
     @staticmethod
@@ -112,8 +112,7 @@ class StatusText(object):
 
     @staticmethod
     def remove_media_url(status_string, toot):
-        return reduce(
-            lambda str, media_dc:
+        return reduce(lambda str, media_dc:
             str.replace(media_dc["text_url"], ""), toot.get_medias(),
             status_string)
 
