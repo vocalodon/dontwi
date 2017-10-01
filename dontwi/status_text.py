@@ -79,6 +79,12 @@ class StatusText(object):
         result = re.sub(" *\n", "\n", status_string)
         return result
 
+    @staticmethod
+    def get_delimiter(str):
+        if "\n" in str:
+            return "\n"
+        return " "
+
     def trim_text(self, status_str):
         limit_len = self.config.getint("message_length", 140)
         marked_parts, char_count = self.slice_content_and_count_len(status_str)
@@ -89,7 +95,7 @@ class StatusText(object):
                 if a_phrase.text_type is TextType.WORDS:
                     len_phrase = len(a_phrase.text)
                     if len_phrase + remain < 1:
-                        a_phrase.text = " "
+                        a_phrase.text = self.get_delimiter(a_phrase.text)
                         remain += len_phrase - 1
                     else:
                         a_phrase.text = a_phrase.text[0:len_phrase + remain]
@@ -97,12 +103,13 @@ class StatusText(object):
                             remain = 0
                             break
                         else:
+                            delimiter = self.get_delimiter(a_phrase.text[len_phrase + remain - 1:-1])
                             if len_phrase + remain > 0:
-                                a_phrase.text = a_phrase.text[:-1] + " "
+                                a_phrase.text = a_phrase.text[:-1] + delimiter
                                 remain = 0
                                 break
                             else:
-                                a_phrase.text[0] = " "
+                                a_phrase.text[0] = delimiter
                                 remain = -1
             marked_parts.reverse()
             if remain < 0:
