@@ -76,8 +76,7 @@ class StatusText(object):
 
     @staticmethod
     def trunc_redundant_line_break(status_string):
-        result = re.sub("\n#", " #", status_string)
-        result = re.sub(" *\n+", "\n", result)
+        result = re.sub(" *\n", "\n", status_string)
         return result
 
     def trim_text(self, status_str):
@@ -132,4 +131,5 @@ class StatusText(object):
         result = self.trunc_redundant_line_break(result)
         result = self.append_user_info(result, toot)
         result = self.trim_text(result)
+
         return result
