@@ -31,8 +31,9 @@ class StatusText(object):
 
     @staticmethod
     def count_url_characters(url):
-        unshorted_uri, status = unshorten(url)
-        return sum([len(s) for s in urlparse(unshorted_uri)[0:2]]) + 3
+        return 23
+        #unshorted_uri, status = unshorten(url)
+        #return sum([len(s) for s in urlparse(unshorted_uri)[0:2]]) + 3
         # +3 means length of "://"
 
     def slice_content_and_count_len(self, status_string):
