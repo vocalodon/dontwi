@@ -7,6 +7,7 @@ from functools import reduce
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 from unshortenit import unshorten
+from unicodedata import name as unicode_name
 
 class TextType(Enum):
     WORDS = 0
@@ -30,6 +31,16 @@ class StatusText(object):
         self.config = config
 
     @staticmethod
+    def codepoint_weight(codepoint):
+        return 1 if ord(codepoint) < 0x1100 else 2 # quick hack
+                                                   # U+1100-11FF is Hangul Jamo
+                                                                                                     # block
+
+    def weighted_length(self,text):
+        weighted_length = sum([self.codepoint_weight(codepoint) for codepoint in text])
+        return weighted_length
+
+    @staticmethod
     def count_url_characters(url):
         return 23
         #unshorted_uri, status = unshorten(url)
@@ -51,8 +62,8 @@ class StatusText(object):
         urls = [s.text for s in marked_parts if s.text_type is TextType.URL]
         hashtags = [
             s.text for s in marked_parts if s.text_type is TextType.HASHTAG]
-        char_count = sum([len(p) for p in words])\
-            + sum([len(p) for p in hashtags]) \
+        char_count = sum([self.weighted_length(p) for p in words])\
+            + sum([self.weighted_length(p) for p in hashtags]) \
             + sum([self.count_url_characters(u) for u in urls])
         return marked_parts, char_count
 
@@ -82,38 +93,37 @@ class StatusText(object):
 
     @staticmethod
     def get_delimiter(str):
-        if "\n" in str:
-            return "\n"
+        match = re.search(r'[\s]', str)
+        if match:
+            return match.group()
         return " "
 
     def trim_text(self, status_str):
-        limit_len = self.config.getint("message_length", 140)
+        limit_len = self.config.getint("message_length", 280)
         marked_parts, char_count = self.slice_content_and_count_len(status_str)
-        remain = limit_len - char_count
-        if remain < 0:
+        remain_capacity = limit_len - char_count
+        if remain_capacity < 0:
             marked_parts.reverse()
             for a_phrase in marked_parts:
                 if a_phrase.text_type is TextType.WORDS:
-                    len_phrase = len(a_phrase.text)
-                    if len_phrase + remain < 1:
+                    len_phrase = self.weighted_length(a_phrase.text)
+                    if len_phrase + remain_capacity < 1:
                         a_phrase.text = self.get_delimiter(a_phrase.text)
-                        remain += len_phrase - 1
+                        remain_capacity += len_phrase - 1
                     else:
-                        a_phrase.text = a_phrase.text[0:len_phrase + remain]
-                        if re.compile("\s$").search(a_phrase.text):
-                            remain = 0
-                            break
-                        else:
-                            delimiter = self.get_delimiter(a_phrase.text[len_phrase + remain - 1:-1])
-                            if len_phrase + remain > 0:
-                                a_phrase.text = a_phrase.text[:-1] + delimiter
-                                remain = 0
+                        to_be_left = ''
+                        for index,codepoint in enumerate(a_phrase.text):
+                            weight = self.codepoint_weight(codepoint)
+                            if len_phrase + remain_capacity - weight - 1 < 0:
+                                index -= 1
                                 break
-                            else:
-                                a_phrase.text[0] = delimiter
-                                remain = -1
+                            to_be_left += codepoint
+                            remain_capacity -= weight
+                        delimiter = self.get_delimiter(a_phrase.text[index:])
+                        a_phrase.text = to_be_left + delimiter
+                        remain_capacity = 0
             marked_parts.reverse()
-            if remain < 0:
+            if remain_capacity < 0:
                 return None
         status_str = "".join([s.text for s in marked_parts])
         return status_str
