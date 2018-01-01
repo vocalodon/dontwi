@@ -5,6 +5,7 @@ from abc import ABCMeta, abstractmethod
 from io import BytesIO, SEEK_SET
 from operator import ge, le
 import requests
+from datetime import datetime
 from dateutil.parser import parse
 from mastodon import Mastodon
 from twython import Twython
@@ -86,28 +87,30 @@ class MastodonConnector(IConnector):
                 return True
         else:
             since_id = None
-
             def condition(status):
-                return operator(parse(status["created_at"]), parse(since))\
-                    if since != "" else True
+                if type(status["created_at"]) is str:
+                    created_at = parse(status["created_at"])
+                else:
+                    created_at = status["created_at"]
+                if since != "":
+                    return operator(created_at, parse(since))
+                else:
+                    return True
+
         return since_id, condition
 
-    def get_statuses_by_hashtag_and_federation(
-            self, hashtag, since_id, max_id, limit):
+    def get_statuses_by_hashtag_and_federation(self, hashtag, since_id, max_id, limit):
         statuses = []
         for a_hashtag in [hashtag, StatusText.federation_hashtag]:
-            statuses += self.mastodon.timeline_hashtag(
-                hashtag=a_hashtag, since_id=since_id, max_id=max_id, limit=limit)
+            statuses += self.mastodon.timeline_hashtag(hashtag=a_hashtag, local=False, max_id=max_id, since_id=since_id, limit=limit)
         statuses.sort(key=lambda status: status["id"], reverse=True)
         return statuses
 
-    def get_timeline_statuses_by_hashtag(
-            self, hashtag, since, until="", limit=""):
+    def get_timeline_statuses_by_hashtag(self, hashtag, since, until="", limit=""):
         since_id, since_cond = self.get_since_id_and_condition_func(since, ge)
         max_id, until_cond = self.get_since_id_and_condition_func(until, le)
         _limit = limit if limit != "" else None
-        searched_statuses = self.get_statuses_by_hashtag_and_federation(
-            hashtag=hashtag, since_id=since_id, max_id=max_id, limit=_limit)
+        searched_statuses = self.get_statuses_by_hashtag_and_federation(hashtag=hashtag, since_id=since_id, max_id=max_id, limit=_limit)
         for a_status in reversed(searched_statuses):
             if a_status["visibility"] == "public"\
                     and not a_status["mentions"]\
@@ -149,8 +152,7 @@ class TwitterConnector(IConnector):
         return super().get_timeline_statuses_by_hashtag(hashtag, since, until, limit)
 
     def update_status(self, status_string, media_ids):
-        return TweetStatus(self.twitter.update_status(
-            status=status_string, media_ids=media_ids))
+        return TweetStatus(self.twitter.update_status(status=status_string, media_ids=media_ids))
 
     def upload_medias(self, media_ios):
         responses = []
@@ -236,8 +238,7 @@ class TweetStatus(IStatus):
         return super().get_user_account()
 
     def get_status_url(self):
-        return "https://twitter.com/{0}/status/{1}".format(
-            self._status["user"]["screen_name"], self._status["id_str"])
+        return "https://twitter.com/{0}/status/{1}".format(self._status["user"]["screen_name"], self._status["id_str"])
 
     def get_medias(self):
         return super().get_medias()
