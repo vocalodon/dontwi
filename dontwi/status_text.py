@@ -22,7 +22,7 @@ class SplitedText(object):
 
 
 class StatusText(object):
-    """description of class"""
+    """Status text processor"""
 
     federation_hashtag = "don_tw"
     url_pattern = re.compile(r"(https?://[\w/:%#@\$&\?\(\)~\.=\+\-]+|#\S+)")
