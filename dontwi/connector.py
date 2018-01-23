@@ -266,7 +266,7 @@ class TootStatus(IStatus):
         return "mastodon"
 
     def get_status_id(self):
-        return self._status["id"]
+        return str(self._status["id"])
 
     def get_user_id(self):
         return self._status["account"]["id"]

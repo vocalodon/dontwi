@@ -189,7 +189,7 @@ def dump_status_strings(conf):
                                                               status_pr=status_pr,
                                                               statuses=statuses,
                                                               trigger_str=trigger_str)
-    status_dc = {a_status.status["id"]: a_status.status["content"]
+    status_dc = {a_status.get_status_id() : a_status.status["content"]
                  for a_status in statuses2}
     dump_strs = ["{0}\n{1}\n{2}\n[{3}]".format(a_summary["inbound_status_id"], a_summary["status_string"],
                                                a_summary["inbound_status_url"], status_dc[a_summary["inbound_status_id"]])
