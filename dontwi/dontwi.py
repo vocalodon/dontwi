@@ -219,11 +219,19 @@ def dump_log_readable(conf):
     pprint(result_log.dump_log())
 
 
-def remove_waiting_result_summaries(conf):
+def remove_specified_summaries(conf,results):
     result_log = ResultLog(conf.items)
-    summaries = result_log.get_result_summaries_by_results(["Waiting"])
+    summaries = result_log.get_result_summaries_by_results(results)
     eids = [a_summary.eid for a_summary in summaries]
     result_log.remove_summaries_by_eids(eids)
+
+
+def remove_waiting_result_summaries(conf):
+    remove_specified_summaries(conf,["Waiting"])
+
+
+def remove_wrong_result_summaries(conf):
+    remove_specified_summaries(conf,["Start","Failed","Test"])
 
 
 def get_secret_and_save(conf):
@@ -272,6 +280,9 @@ def main():
                         help="Dumping all records in the log database in a human-readable format.",
                         action='store_true')
     ar_prs.add_argument("--remove-waiting",
+                        help="Removinng records in 'Waiting' from the database",
+                        action='store_true')
+    ar_prs.add_argument("--remove-wrong",
                         help="Removinng records in 'Waiting' from the database",
                         action='store_true')
     ar_prs.add_argument("--db-file",
@@ -329,6 +340,9 @@ def main():
         exit()
     if args.remove_waiting:
         remove_waiting_result_summaries(conf)
+        exit()
+    if args.remove_wrong:
+        remove_wrong_result_summaries(conf)
         exit()
     dontwi = Dontwi(conf)
     dontwi.run(args.dry_run)
