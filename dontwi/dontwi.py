@@ -15,6 +15,7 @@ from connector import MastodonConnector, TwitterConnector
 from exception import DontwiConfigError, DontwiNotImplementedError
 from result_log import ResultLog
 from status_text import StatusText
+from const import dontwi_version
 
 
 class Dontwi(object):
@@ -173,6 +174,16 @@ class Dontwi(object):
         return log_str
 
 
+def show_log_db_summary(conf):
+    result_log = ResultLog(conf.items)
+    print("dontwi version\t{0}".format(dontwi_version))
+    print("log db\t{0}".format(result_log.get_info()))
+    print('record number\t{0}'.format(result_log.get_record_number()))
+    for result_status in [ "Start","Waiting","Succeed","Failed","Test"]:
+        results = result_log.get_result_summaries_by_results([result_status])
+        print("{0}\t{1}".format(result_status,len(results)))
+
+
 def dump_status_strings(conf):
     dontwi = Dontwi(conf)
     in_cn = dontwi.get_connector("inbound")
@@ -233,12 +244,15 @@ def main():
     # not
     # exists.",action='store_true')
     # ar_prs.add_argument("--init-config",help=argparse.SUPPRESS,action='store_true')
+    ar_prs.add_argument("--summary",
+                        help="Showing summary of log DB",
+                        action="store_true")
     ar_prs.add_argument("--trigger",
-                        help="Using TRIGGER instead of trigger in config file.")
+                        help="Using TRIGGER instead of trigger in config file")
     ar_prs.add_argument("--since",
-                        help="Using SINCE instead of since in config file.")
+                        help="Using SINCE instead of since in config file")
     ar_prs.add_argument("--until",
-                        help="Using UNTIL instead of until in config file.")
+                        help="Using UNTIL instead of until in config file")
     ar_prs.add_argument("--limit",
                         help="Using LIMIT insted of limit in config file")
     ar_prs.add_argument("--save", help="", action='store_true')
@@ -300,6 +314,9 @@ def main():
         exit()
     if args.save:
         conf.save()
+        exit()
+    if args.summary:
+        show_log_db_summary(conf)
         exit()
     if args.dump_status_strings:
         dump_status_strings(conf)

@@ -5,13 +5,57 @@ from datetime import datetime, timezone
 from functools import reduce
 from operator import and_, or_
 from tinydb import Query, TinyDB
-
+from packaging import version
+from const import dontwi_version
 
 class ResultLog(object):
-    """description of class"""
+    """Log DB manager class"""
 
     def __init__(self, config):
         self.items = config
+        self.file_name = self.items["result log"]["db_file"]
+        with TinyDB(self.file_name) as db_entity:
+            if len(db_entity) == 0:
+                self.__set_info(db_entity)
+            else:
+                info_table = self.__get_info_table(db_entity)
+                app_info = self.__get_info_from_table(info_table)
+                version_str = app_info[0]['version'] if len(app_info) > 0 else '0'
+                if version.parse(version_str) < version.parse('1.0'):
+                    self.migrate_to_1_0(db_entity)
+
+    def __get_info_table(self,db_entity):
+        info_table = db_entity.table('info')
+        return info_table
+
+    def __get_info_from_table(self,info_table):
+        app_info = info_table.search(Query().application == 'dontwi')
+        return app_info
+
+    def __set_info(self,db_entity):
+        info_table = self.__get_info_table(db_entity)
+        app_info = self.__get_info_from_table(info_table)
+        if len(app_info) == 0:
+            info_table.insert({'application':'dontwi','version':dontwi_version})
+        else:
+            info_table.update({'version':dontwi_version}, eids=[app_info[0].eid])
+
+    def get_info(self):
+        with TinyDB(self.file_name) as db_entity:
+            info_table = self.__get_info_table(db_entity)
+            app_info = self.__get_info_from_table(info_table)
+        return app_info[0]
+
+    def get_record_number(self):
+        with TinyDB(self.file_name) as db_entity:
+            return len(db_entity)
+
+    def migrate_to_1_0(self,db_entity):
+        for element in db_entity:
+            if type(element['inbound_status_id']) is int:
+                element['inbound_status_id'] = str(element['inbound_status_id'])
+                db_entity.update(element, eids=[element.eid])
+        self.__set_info(db_entity)
 
     def has_result_of_status(self, status, results):
         inbound_str = self.items["operation"]["inbound"]
@@ -26,8 +70,7 @@ class ResultLog(object):
     def get_result_summaries_by_status(self, status):
         inbound_str = self.items["operation"]["inbound"]
         query = Query()
-        combined_query = (query.inbound == inbound_str) & (
-            query.inbound_status_id == status.get_status_id())
+        combined_query = (query.inbound == inbound_str) & (query.inbound_status_id == status.get_status_id())
         return self.search_db(combined_query)
 
     def get_result_summaries_by_results(self, results):
@@ -37,8 +80,7 @@ class ResultLog(object):
         return self.search_db(combined_query)
 
     def search_db(self, query):
-        file_name = self.items["result log"]["db_file"]
-        with TinyDB(file_name) as db_entity:
+        with TinyDB(self.file_name) as db_entity:
             summaries = db_entity.search(query)
             return summaries
         return None
@@ -46,8 +88,7 @@ class ResultLog(object):
     def make_result_summary(self, inbound_status,
                             outbound_status, status_string, hashtag,
                             result):
-        summary = self.make_result_and_others_summary(
-            status_string=status_string, hashtag=hashtag, result=result)
+        summary = self.make_result_and_others_summary(status_string=status_string, hashtag=hashtag, result=result)
         summary.update(self.make_status_summary("inbound",
                                                 status=inbound_status))
         summary.update(self.make_status_summary("outbound",
@@ -55,27 +96,23 @@ class ResultLog(object):
         return summary
 
     def save_result_summaries(self, result_summaries):
-        f_name = self.items["result log"]["db_file"]
-        with TinyDB(f_name) as db_entity:
+        with TinyDB(self.file_name) as db_entity:
             eids = db_entity.insert_multiple(result_summaries)
             return eids
         return None
 
     def update_result_summary_in_db(self, result_summary, eids):
-        f_name = self.items["result log"]["db_file"]
-        with TinyDB(f_name) as db_entity:
+        with TinyDB(self.file_name) as db_entity:
             eids2 = db_entity.update(result_summary, eids=eids)
             return eids2
         return True
 
     def dump_log(self):
-        f_name = self.items["result log"]["db_file"]
-        with TinyDB(f_name) as db_entity:
+        with TinyDB(self.file_name) as db_entity:
             return db_entity.all()
 
     def remove_summaries_by_eids(self, eids):
-        f_name = self.items["result log"]["db_file"]
-        with TinyDB(f_name) as db_entity:
+        with TinyDB(self.file_name) as db_entity:
             return db_entity.remove(eids=eids)
 
     def make_status_summary(self, direction, status):
