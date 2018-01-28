@@ -9,13 +9,15 @@ from argparse import SUPPRESS, ArgumentParser
 from itertools import tee
 from logging import StreamHandler, getLogger
 from pprint import pprint
+
 from twython import TwythonError
+
 from config import Config
 from connector import MastodonConnector, TwitterConnector
 from exception import DontwiConfigError, DontwiNotImplementedError
 from result_log import ResultLog
 from status_text import StatusText
-from const import dontwi_version
+from version import __version__
 
 
 class Dontwi(object):
@@ -176,7 +178,7 @@ class Dontwi(object):
 
 def show_log_db_summary(conf):
     result_log = ResultLog(conf.items)
-    print("dontwi version\t{0}".format(dontwi_version))
+    print("dontwi version\t{0}".format(__version__))
     print("log db\t{0}".format(result_log.get_info()))
     print('record number\t{0}'.format(result_log.get_record_number()))
     for result_status in [ "Start","Waiting","Succeed","Failed","Test"]:

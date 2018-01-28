@@ -4,9 +4,12 @@
 from datetime import datetime, timezone
 from functools import reduce
 from operator import and_, or_
-from tinydb import Query, TinyDB
+
 from packaging import version
-from const import dontwi_version
+from tinydb import Query, TinyDB
+
+from version import __version__
+
 
 class ResultLog(object):
     """Log DB manager class"""
@@ -36,9 +39,9 @@ class ResultLog(object):
         info_table = self.__get_info_table(db_entity)
         app_info = self.__get_info_from_table(info_table)
         if len(app_info) == 0:
-            info_table.insert({'application':'dontwi','version':dontwi_version})
+            info_table.insert({'application':'dontwi','version':__version__})
         else:
-            info_table.update({'version':dontwi_version}, eids=[app_info[0].eid])
+            info_table.update({'version':__version__}, eids=[app_info[0].eid])
 
     def get_info(self):
         with TinyDB(self.file_name) as db_entity:
