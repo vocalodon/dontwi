@@ -2,18 +2,20 @@
 """Management of connections to twitter and mastodon instance
 """
 from abc import ABCMeta, abstractmethod
-from io import BytesIO, SEEK_SET
-from operator import ge, le
-import requests
+from collections import namedtuple
 from datetime import datetime
+from io import SEEK_SET, BytesIO
+from operator import ge, le
+
+import requests
 from dateutil.parser import parse
+from magic import Magic
 from mastodon import Mastodon
 from twython import Twython
+
 from exception import DontwiNotImplementedError
-from status_text import StatusText
-from collections import namedtuple
-from magic import Magic
 from media import TwitterMedia
+from status_text import StatusText
 
 
 class IConnector(metaclass=ABCMeta):

@@ -2,13 +2,15 @@
 """ Processing of attached media
 """
 from abc import ABCMeta, abstractmethod
+from io import SEEK_END, SEEK_SET, BytesIO
+from math import sqrt
 from os import remove
 from os.path import exists
-from exception import DontwiNotImplementedError
+
 from magic import Magic
-from io import BytesIO, SEEK_SET, SEEK_END
-from exception import DontwiMediaError
-from math import sqrt
+
+from exception import DontwiMediaError, DontwiNotImplementedError
+
 #from PIL import Image
 #from ffmpeg import input, output, filter_, run
 #from ffprobe3 import FFProbe

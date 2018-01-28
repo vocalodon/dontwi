@@ -4,10 +4,12 @@
 import re
 from enum import Enum
 from functools import reduce
+from unicodedata import name as unicode_name
 from urllib.parse import urlparse
+
 from bs4 import BeautifulSoup
 from unshortenit import unshorten
-from unicodedata import name as unicode_name
+
 
 class TextType(Enum):
     WORDS = 0

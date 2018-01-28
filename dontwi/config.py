@@ -6,6 +6,7 @@ import configparser
 import os
 from functools import reduce
 from operator import and_
+
 from exception import DontwiConfigError, DontwiNotImplementedError
 
 
