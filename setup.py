@@ -5,7 +5,7 @@
 See:
 https://github.com/vocalodon/dontwi
 '''
-from distutils.core import setup
+from setuptools import setup, find_packages
 from os import path
 from dontwi.version import __version__
 
@@ -22,5 +22,6 @@ setup(
     url='https://github.com/vocalodon/dontwi',
     long_description=long_description,
     license='GNU General Public License v3.0',
-    packages=['dontwi']
+    packages=['dontwi'],
+    test_suite='dontwi.tests'
 )

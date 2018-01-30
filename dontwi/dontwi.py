@@ -12,12 +12,12 @@ from pprint import pprint
 
 from twython import TwythonError
 
-from config import Config
-from connector import MastodonConnector, TwitterConnector
-from exception import DontwiConfigError, DontwiNotImplementedError
-from result_log import ResultLog
-from status_text import StatusText
-from version import __version__
+from .config import Config
+from .connector import MastodonConnector, TwitterConnector
+from .exception import DontwiConfigError, DontwiNotImplementedError
+from .result_log import ResultLog
+from .status_text import StatusText
+from .version import __version__
 
 
 class Dontwi(object):

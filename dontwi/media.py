@@ -9,7 +9,7 @@ from os.path import exists
 
 from magic import Magic
 
-from exception import DontwiMediaError, DontwiNotImplementedError
+from .exception import DontwiMediaError, DontwiNotImplementedError
 
 #from PIL import Image
 #from ffmpeg import input, output, filter_, run

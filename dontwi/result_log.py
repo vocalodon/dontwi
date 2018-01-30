@@ -8,7 +8,7 @@ from operator import and_, or_
 from packaging import version
 from tinydb import Query, TinyDB
 
-from version import __version__
+from .version import __version__
 
 
 class ResultLog(object):

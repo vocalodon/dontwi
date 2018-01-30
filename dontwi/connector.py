@@ -13,9 +13,9 @@ from magic import Magic
 from mastodon import Mastodon
 from twython import Twython
 
-from exception import DontwiNotImplementedError
-from media import TwitterMedia
-from status_text import StatusText
+from .exception import DontwiNotImplementedError
+from .media import TwitterMedia
+from .status_text import StatusText
 
 
 class IConnector(metaclass=ABCMeta):

@@ -7,7 +7,7 @@ import os
 from functools import reduce
 from operator import and_
 
-from exception import DontwiConfigError, DontwiNotImplementedError
+from .exception import DontwiConfigError, DontwiNotImplementedError
 
 
 class Config(object):
