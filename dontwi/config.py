@@ -114,7 +114,7 @@ class Config(object):
 
     def load(self):
         if self.load_config_file():
-            raise DontwiConfigError('Failed to read the configuration file, which is named as \'dontwi.ini\' if not specified')
+            raise DontwiConfigError('Failed to read the configuration file \'{0}\''.format(self.filename))
         if not self.has_required_sections():
             raise DontwiConfigError
         if not self.has_required_options():
