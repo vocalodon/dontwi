@@ -4,18 +4,22 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>451029b4-2c38-4306-bb42-5fdb038983b7</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>dontwi.py</StartupFile>
+    <StartupFile>
+    </StartupFile>
     <SearchPath>
     </SearchPath>
-    <WorkingDirectory>.</WorkingDirectory>
+    <WorkingDirectory>..</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>dontwi</Name>
     <RootNamespace>dontwi</RootNamespace>
     <IsWindowsApplication>False</IsWindowsApplication>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
-    <CommandLineArguments>
-    </CommandLineArguments>
+    <CommandLineArguments>-m dontwi --dry-run</CommandLineArguments>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
+    <InterpreterId>Global|PythonCore|3.4</InterpreterId>
+    <Environment>
+    </Environment>
+    <PublishUrl>ftps://192.168.1.7/pub/</PublishUrl>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -45,12 +49,23 @@
     <Compile Include="status_text.py">
       <SubType>Code</SubType>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="dontwi.ini" />
+    <Compile Include="tests\test_config.py" />
+    <Compile Include="tests\test_connector.py" />
+    <Compile Include="tests\test_dontwi.py" />
+    <Compile Include="tests\test_result_log.py" />
+    <Compile Include="tests\test_status_text.py" />
+    <Compile Include="version.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="tests\__init__.py" />
+    <Compile Include="__main__.py" />
+    <Compile Include="__init__.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="tests\" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="Global|PythonCore|3.4" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
