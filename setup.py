@@ -23,5 +23,10 @@ setup(
     long_description=long_description,
     license='GNU General Public License v3.0',
     packages=['dontwi'],
-    test_suite='dontwi.tests'
+    test_suite='dontwi.tests',
+    entry_points={
+        'console_scripts': [
+            'dontwi=dontwi.__main__:main'
+        ]
+    },
 )
