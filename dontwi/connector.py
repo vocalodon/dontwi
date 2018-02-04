@@ -3,8 +3,7 @@
 """
 from abc import ABCMeta, abstractmethod
 from collections import namedtuple
-from datetime import datetime
-from io import SEEK_SET, BytesIO
+from io import BytesIO
 from operator import ge, le
 
 import requests
@@ -22,14 +21,14 @@ class IConnector(metaclass=ABCMeta):
 
     @abstractmethod
     def __init__(self, config):
-        raise DontwiNotImplementedError
+        self.config = config
 
     @abstractmethod
     def connect(self, do_login=False):
         raise DontwiNotImplementedError
 
     @abstractmethod
-    def get_timeline_statuses_by_hashtag(self, hashtag, since, until, limit):
+    def get_statuses_by_hashtag(self, hashtag, since, until, limit):
         raise DontwiNotImplementedError
 
     @abstractmethod
@@ -50,7 +49,7 @@ class IConnector(metaclass=ABCMeta):
 class MastodonConnector(IConnector):
 
     def __init__(self, config):
-        self.config = config
+        super().__init__(config)
         self.mastodon = None
 
     def register_to_mastodon(self):
@@ -89,8 +88,9 @@ class MastodonConnector(IConnector):
                 return True
         else:
             since_id = None
+
             def condition(status):
-                if type(status["created_at"]) is str:
+                if isinstance(status["created_at"], str):
                     created_at = parse(status["created_at"])
                 else:
                     created_at = status["created_at"]
@@ -101,18 +101,21 @@ class MastodonConnector(IConnector):
 
         return since_id, condition
 
-    def get_statuses_by_hashtag_and_federation(self, hashtag, since_id, max_id, limit):
+    def __get_timeline_statuses_by_hashtag(
+            self, hashtag, since_id, max_id, limit):
         statuses = []
         for a_hashtag in [hashtag, StatusText.federation_hashtag]:
-            statuses += self.mastodon.timeline_hashtag(hashtag=a_hashtag, local=False, max_id=max_id, since_id=since_id, limit=limit)
+            statuses += self.mastodon.timeline_hashtag(
+                hashtag=a_hashtag, local=False, max_id=max_id, since_id=since_id, limit=limit)
         statuses.sort(key=lambda status: status["id"], reverse=True)
         return statuses
 
-    def get_timeline_statuses_by_hashtag(self, hashtag, since, until="", limit=""):
+    def get_statuses_by_hashtag(self, hashtag, since, until="", limit=""):
         since_id, since_cond = self.get_since_id_and_condition_func(since, ge)
         max_id, until_cond = self.get_since_id_and_condition_func(until, le)
         _limit = limit if limit != "" else None
-        searched_statuses = self.get_statuses_by_hashtag_and_federation(hashtag=hashtag, since_id=since_id, max_id=max_id, limit=_limit)
+        searched_statuses = self.__get_timeline_statuses_by_hashtag(
+            hashtag=hashtag, since_id=since_id, max_id=max_id, limit=_limit)
         for a_status in reversed(searched_statuses):
             if a_status["visibility"] == "public"\
                     and not a_status["mentions"]\
@@ -135,7 +138,7 @@ class MastodonConnector(IConnector):
 class TwitterConnector(IConnector):
 
     def __init__(self, config):
-        self.config = config
+        super().__init__(config)
         self.twitter = None
         self.magic = Magic(mime=True)
 
@@ -150,11 +153,12 @@ class TwitterConnector(IConnector):
                                oauth_token_secret)
         return None
 
-    def get_timeline_statuses_by_hashtag(self, hashtag, since, until, limit):
-        return super().get_timeline_statuses_by_hashtag(hashtag, since, until, limit)
+    def get_statuses_by_hashtag(self, hashtag, since, until, limit):
+        return super().get_statuses_by_hashtag(hashtag, since, until, limit)
 
     def update_status(self, status_string, media_ids):
-        return TweetStatus(self.twitter.update_status(status=status_string, media_ids=media_ids))
+        return TweetStatus(self.twitter.update_status(
+            status=status_string, media_ids=media_ids))
 
     def upload_medias(self, media_ios):
         responses = []
@@ -170,7 +174,6 @@ class TwitterConnector(IConnector):
                     media_io, mime = (a_io.io, media.get_mime(a_io.io))
                     # responses.append(self.twitter.upload_video(media_io,
                     # media_type=mime))
-                    pass
             finally:
                 media_io.close()
         media_ids = [a_response["media_id"] for a_response in responses]
@@ -240,16 +243,14 @@ class TweetStatus(IStatus):
         return super().get_user_account()
 
     def get_status_url(self):
-        return "https://twitter.com/{0}/status/{1}".format(self._status["user"]["screen_name"], self._status["id_str"])
+        return "https://twitter.com/{0}/status/{1}".format(
+            self._status["user"]["screen_name"], self._status["id_str"])
 
     def get_medias(self):
         return super().get_medias()
 
 
 class TootStatus(IStatus):
-
-    def __init__(self, status_dict):
-        self._status_setter(status_dict)
 
     def _status_setter(self, status_dict):
         if "_pagination_prev" is status_dict:

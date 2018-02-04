@@ -16,7 +16,7 @@ class Config(object):
     Other classes get option values through this instance.
     """
     filename = "dontwi.ini"
-    search_path = [".", "../etc"]
+    search_path = [".", "/etc"]
     required_params = {
         "endpoint mastodon": ["client_name", "api_base_url"],
         "endpoint twitter": ["app_key", "app_secret", "oauth_token",
@@ -114,7 +114,7 @@ class Config(object):
 
     def load(self):
         if self.load_config_file():
-            raise DontwiConfigError
+            raise DontwiConfigError('Failed to read the configuration file, which is named as \'dontwi.ini\' if not specified')
         if not self.has_required_sections():
             raise DontwiConfigError
         if not self.has_required_options():

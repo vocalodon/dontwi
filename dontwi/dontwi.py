@@ -28,7 +28,8 @@ class Dontwi(object):
 
     def get_trigger(self):
         triger_str = self.config.items["operation"]["trigger"]
-        parse_triger_word = re.match("(?P<type>hashtag|keyword|user):(?P<word>.*)", triger_str)
+        parse_triger_word = re.match(
+            "(?P<type>hashtag|keyword|user):(?P<word>.*)", triger_str)
         type_str = parse_triger_word.group("type")
         if type_str == "hashtag":
             word_str = parse_triger_word.group("word")
@@ -55,22 +56,28 @@ class Dontwi(object):
         return False
 
     @staticmethod
-    def summaries_to_be_listed_in_waiting_list(result_log, status_pr, statuses, trigger_str):
+    def summaries_to_be_listed(
+            result_log, status_pr, statuses, trigger_str):
         summaries = []
         for a_status in statuses:
             # results's 2nd.  condition which match to "Start" is for
             # fail-safe.
-            if not result_log.has_result_of_status(status=a_status, results=["Succeed", "Start", "Failed"]):
-                st_str = status_pr.make_tweet_string_from_toot(a_status, hashtag=trigger_str)
+            if not result_log.has_result_of_status(
+                    status=a_status, results=["Succeed", "Start", "Failed"]):
+                st_str = status_pr.make_tweet_string_from_toot(
+                    a_status, hashtag=trigger_str)
                 rs_str = "Waiting"
-                rs_sm = result_log.make_result_and_others_summary(status_string=st_str, hashtag=trigger_str, result=rs_str)
+                rs_sm = result_log.make_result_and_others_summary(
+                    status_string=st_str, hashtag=trigger_str, result=rs_str)
                 in_sm = result_log.make_status_summary("inbound", a_status)
                 rs_sm.update(in_sm)
                 summaries.append(rs_sm)
         return summaries
 
-    def fill_in_waiting_list(self, result_log, status_pr, statuses, triger_str):
-        summaries = self.summaries_to_be_listed_in_waiting_list(result_log, status_pr, statuses, triger_str)
+    def fill_in_waiting_list(
+            self, result_log, status_pr, statuses, triger_str):
+        summaries = self.summaries_to_be_listed(
+            result_log, status_pr, statuses, triger_str)
         eids = result_log.save_result_summaries(result_summaries=summaries)
         if eids is None:
             self.logger.debug("Failed to update log database.")
@@ -80,7 +87,8 @@ class Dontwi(object):
                                    is_dry_run):
         result_summary["result"] = "Start"
         result_summary.update(result_log.get_processed_at_dict())
-        [result_summary_eid] = result_log.update_result_summary_in_db(result_summary=result_summary, eids=[result_summary.eid])
+        [result_summary_eid] = result_log.update_result_summary_in_db(
+            result_summary=result_summary, eids=[result_summary.eid])
         out_status = None
         try:
             out_cn.connect()
@@ -88,7 +96,8 @@ class Dontwi(object):
                 media_ids = out_cn.upload_medias(media_ios)\
                     if self.config.outbound.getboolean("attach_media", "yes")\
                     else []
-                out_status = out_cn.update_status(result_summary["status_string"], media_ids=media_ids)
+                out_status = out_cn.update_status(
+                    result_summary["status_string"], media_ids=media_ids)
                 result_summary["result"] = "Succeed"
             else:
                 result_summary["result"] = "Test"
@@ -99,9 +108,11 @@ class Dontwi(object):
             pass
         if not is_dry_run:
             if out_status:
-                out_summary = result_log.make_status_summary("outbound", out_status)
+                out_summary = result_log.make_status_summary(
+                    "outbound", out_status)
                 result_summary.update(out_summary)
-        [updated_eid] = result_log.update_result_summary_in_db(result_summary=result_summary, eids=[result_summary_eid])
+        [updated_eid] = result_log.update_result_summary_in_db(
+            result_summary=result_summary, eids=[result_summary_eid])
         if result_summary_eid is not updated_eid:
             self.logger.debug("Failed to update log database.")
             return True
@@ -141,10 +152,12 @@ class Dontwi(object):
                     in_cn.connect()
                     trigger_str = self.get_trigger()
                     status_text = StatusText(self.config.outbound)
-                    statuses = in_cn.get_timeline_statuses_by_hashtag(hashtag=trigger_str, since=self.config.inbound.get("since", ""),
-                        until=self.config.inbound.get("until", ""),
+                    statuses = in_cn.get_statuses_by_hashtag(hashtag=trigger_str, since=self.config.inbound.get("since", ""),
+                                                             until=self.config.inbound.get(
+                        "until", ""),
                         limit=self.config.inbound.get("limit", ""))
-                    eids = self.fill_in_waiting_list(result_log, status_text, statuses, trigger_str)
+                    eids = self.fill_in_waiting_list(
+                        result_log, status_text, statuses, trigger_str)
                     if not eids:
                         return False
         self.logger.warning("Something wrong in waiting list process!")
@@ -172,7 +185,8 @@ class Dontwi(object):
         values_to_log = [
             result_summary[a_key]
             if a_key in result_summary else "" for a_key in keys_to_log]
-        log_str = ("{0[0]} at {0[1]} " + "in:{0[2]},{0[3]} out:{0[4]},{0[5]} " + "tag:{0[6]}").format(values_to_log)
+        log_str = ("{0[0]} at {0[1]} " + "in:{0[2]},{0[3]} out:{0[4]},{0[5]} " +
+                   "tag:{0[6]}").format(values_to_log)
         return log_str
 
 
@@ -181,28 +195,28 @@ def show_log_db_summary(conf):
     print("dontwi version\t{0}".format(__version__))
     print("log db\t{0}".format(result_log.get_info()))
     print('record number\t{0}'.format(result_log.get_record_number()))
-    for result_status in [ "Start","Waiting","Succeed","Failed","Test"]:
+    for result_status in ["Start", "Waiting", "Succeed", "Failed", "Test"]:
         results = result_log.get_result_summaries_by_results([result_status])
-        print("{0}\t{1}".format(result_status,len(results)))
+        print("{0}\t{1}".format(result_status, len(results)))
 
 
 def dump_status_strings(conf):
     dontwi = Dontwi(conf)
     in_cn = dontwi.get_connector("inbound")
     in_cn.connect()
-    operation_cf = dontwi.config.items["operation"]
     trigger_str = dontwi.get_trigger()
     [since, until, limit] = [
         dontwi.config.inbound.get(option, "")
         for option in ["since", "until", "limit"]]
-    statuses, statuses2 = tee(in_cn.get_timeline_statuses_by_hashtag(hashtag=trigger_str, since=since, until=until, limit=limit))
+    statuses, statuses2 = tee(in_cn.get_statuses_by_hashtag(
+        hashtag=trigger_str, since=since, until=until, limit=limit))
     status_pr = StatusText(dontwi.config.outbound)
     result_log = ResultLog(dontwi.config.items)
-    summaries = dontwi.summaries_to_be_listed_in_waiting_list(result_log=result_log,
+    summaries = dontwi.summaries_to_be_listed(result_log=result_log,
                                                               status_pr=status_pr,
                                                               statuses=statuses,
                                                               trigger_str=trigger_str)
-    status_dc = {a_status.get_status_id() : a_status.status["content"]
+    status_dc = {a_status.get_status_id(): a_status.status["content"]
                  for a_status in statuses2}
     dump_strs = ["{0}\n{1}\n{2}\n[{3}]".format(a_summary["inbound_status_id"], a_summary["status_string"],
                                                a_summary["inbound_status_url"], status_dc[a_summary["inbound_status_id"]])
@@ -221,7 +235,7 @@ def dump_log_readable(conf):
     pprint(result_log.dump_log())
 
 
-def remove_specified_summaries(conf,results):
+def remove_specified_summaries(conf, results):
     result_log = ResultLog(conf.items)
     summaries = result_log.get_result_summaries_by_results(results)
     eids = [a_summary.eid for a_summary in summaries]
@@ -229,11 +243,11 @@ def remove_specified_summaries(conf,results):
 
 
 def remove_waiting_result_summaries(conf):
-    remove_specified_summaries(conf,["Waiting"])
+    remove_specified_summaries(conf, ["Waiting"])
 
 
 def remove_wrong_result_summaries(conf):
-    remove_specified_summaries(conf,["Start","Failed","Test"])
+    remove_specified_summaries(conf, ["Start", "Failed", "Test"])
 
 
 def get_secret_and_save(conf):
@@ -247,7 +261,8 @@ def get_secret_and_save(conf):
 
 
 def main():
-    ar_prs = ArgumentParser(description="A status transporter from Mastodon to Twitter")
+    ar_prs = ArgumentParser(
+        description="A status transporter from Mastodon to Twitter")
     ar_prs.add_argument("--config-file",
                         help="Using CONFIG_FILE instead of default.")
     # ar_prs.add_argument("--init-config",help="Only generate config file when
@@ -267,10 +282,12 @@ def main():
                         help="Using LIMIT insted of limit in config file")
     ar_prs.add_argument("--save", help="", action='store_true')
     ar_prs.add_argument("--dry-run",
-                        help="Getting last status with the hashtag, " + "but don't update status at outbound service.",
+                        help="Getting last status with the hashtag, " +
+                        "but don't update status at outbound service.",
                         action='store_true')
     ar_prs.add_argument("--get-secret",
-                        help="Getting client id and others from mastodon instance, " + "and saving these in config file.",
+                        help="Getting client id and others from mastodon instance, " +
+                        "and saving these in config file.",
                         action="store_true")
     ar_prs.add_argument("--dump-status-strings",
                         help="Dumping status strings to be marked as 'Waiting' status",
@@ -297,9 +314,9 @@ def main():
         from socket import gethostbyname
         import ptvsd
         hostname = gethostname()
-        hostname_addr = [hostname,gethostbyname(hostname)]
+        hostname_addr = [hostname, gethostbyname(hostname)]
         for info in hostname_addr:
-            print('tcp://{0}@{1}:5678'.format(args.ptvsd_secret,info))
+            print('tcp://{0}@{1}:5678'.format(args.ptvsd_secret, info))
         ptvsd.enable_attach(args.ptvsd_secret)
         ptvsd.wait_for_attach()
 

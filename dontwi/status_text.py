@@ -4,11 +4,8 @@
 import re
 from enum import Enum
 from functools import reduce
-from unicodedata import name as unicode_name
-from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
-from unshortenit import unshorten
 
 
 class TextType(Enum):
@@ -34,26 +31,27 @@ class StatusText(object):
 
     @staticmethod
     def codepoint_weight(codepoint):
-        return 1 if ord(codepoint) < 0x1100 else 2 # quick hack
-                                                   # U+1100-11FF is Hangul Jamo
-                                                                                                     # block
+        return 1 if ord(codepoint) < 0x1100 else 2  # quick hack
+        # U+1100-11FF is Hangul Jamo
+        # block
 
-    def weighted_length(self,text):
-        weighted_length = sum([self.codepoint_weight(codepoint) for codepoint in text])
+    def weighted_length(self, text):
+        weighted_length = sum([self.codepoint_weight(codepoint)
+                               for codepoint in text])
         return weighted_length
 
     @staticmethod
     def count_url_characters(url):
         return 23
         #unshorted_uri, status = unshorten(url)
-        #return sum([len(s) for s in urlparse(unshorted_uri)[0:2]]) + 3
+        # return sum([len(s) for s in urlparse(unshorted_uri)[0:2]]) + 3
         # +3 means length of "://"
 
     def slice_content_and_count_len(self, status_string):
         splited_text = self.url_pattern.split(status_string)
-        for index in [0,-1]:
+        for index in [0, -1]:
             if splited_text[index] == "":
-                del splited_text[index]  
+                del splited_text[index]
         marked_parts = [
             SplitedText(text=s, text_type=(lambda q:
                                            TextType.WORDS if not self.url_pattern.match(q)
@@ -70,12 +68,15 @@ class StatusText(object):
         return marked_parts, char_count
 
     def replace_trigger_tag(self, status_string, hashtag):
-        result = status_string.replace("#{0}".format(hashtag), "#{0}".format(self.federation_hashtag))
+        result = status_string.replace(
+            "#{0}".format(hashtag), "#{0}".format(
+                self.federation_hashtag))
         return result
 
     @staticmethod
     def append_user_info(status_string, toot):
-        modified_str = "{0}\n{1}".format(toot.get_user_account(), status_string)
+        modified_str = "{0}\n{1}".format(
+            toot.get_user_account(), status_string)
         return modified_str
 
     @staticmethod
@@ -94,8 +95,8 @@ class StatusText(object):
         return result
 
     @staticmethod
-    def get_delimiter(str):
-        match = re.search(r'[\s]', str)
+    def get_delimiter(text):
+        match = re.search(r'[\s]', text)
         if match:
             return match.group()
         return " "
@@ -108,13 +109,15 @@ class StatusText(object):
             marked_parts.reverse()
             for a_phrase in marked_parts:
                 if a_phrase.text_type is TextType.WORDS:
+                    assert a_phrase.text
                     len_phrase = self.weighted_length(a_phrase.text)
                     if len_phrase + remain_capacity < 1:
                         a_phrase.text = self.get_delimiter(a_phrase.text)
                         remain_capacity += len_phrase - 1
                     else:
                         to_be_left = ''
-                        for index,codepoint in enumerate(a_phrase.text):
+                        index = None
+                        for index, codepoint in enumerate(a_phrase.text):
                             weight = self.codepoint_weight(codepoint)
                             if len_phrase + remain_capacity - weight - 1 < 0:
                                 index -= 1
@@ -133,8 +136,8 @@ class StatusText(object):
     @staticmethod
     def remove_media_url(status_string, toot):
         return reduce(lambda str, media_dc:
-            str.replace(media_dc["text_url"], ""), toot.get_medias(),
-            status_string)
+                      str.replace(media_dc["text_url"], ""), toot.get_medias(),
+                      status_string)
 
     def make_tweet_string_from_toot(self, toot, hashtag):
         if not "spoiler_text" in toot.status\

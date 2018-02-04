@@ -18,30 +18,33 @@ class ResultLog(object):
         self.items = config
         self.file_name = self.items["result log"]["db_file"]
         with TinyDB(self.file_name) as db_entity:
-            if len(db_entity) == 0:
+            if not db_entity:
                 self.__set_info(db_entity)
             else:
                 info_table = self.__get_info_table(db_entity)
                 app_info = self.__get_info_from_table(info_table)
-                version_str = app_info[0]['version'] if len(app_info) > 0 else '0'
+                version_str = app_info[0]['version'] if app_info else '0'
                 if version.parse(version_str) < version.parse('1.0'):
                     self.migrate_to_1_0(db_entity)
 
-    def __get_info_table(self,db_entity):
+    @staticmethod
+    def __get_info_table(db_entity):
         info_table = db_entity.table('info')
         return info_table
 
-    def __get_info_from_table(self,info_table):
+    @staticmethod
+    def __get_info_from_table(info_table):
         app_info = info_table.search(Query().application == 'dontwi')
         return app_info
 
-    def __set_info(self,db_entity):
+    def __set_info(self, db_entity):
         info_table = self.__get_info_table(db_entity)
         app_info = self.__get_info_from_table(info_table)
-        if len(app_info) == 0:
-            info_table.insert({'application':'dontwi','version':__version__})
+        if not app_info:
+            info_table.insert(
+                {'application': 'dontwi', 'version': __version__})
         else:
-            info_table.update({'version':__version__}, eids=[app_info[0].eid])
+            info_table.update({'version': __version__}, eids=[app_info[0].eid])
 
     def get_info(self):
         with TinyDB(self.file_name) as db_entity:
@@ -53,10 +56,11 @@ class ResultLog(object):
         with TinyDB(self.file_name) as db_entity:
             return len(db_entity)
 
-    def migrate_to_1_0(self,db_entity):
+    def migrate_to_1_0(self, db_entity):
         for element in db_entity:
-            if type(element['inbound_status_id']) is int:
-                element['inbound_status_id'] = str(element['inbound_status_id'])
+            if isinstance(element['inbound_status_id'], int):
+                element['inbound_status_id'] = str(
+                    element['inbound_status_id'])
                 db_entity.update(element, eids=[element.eid])
         self.__set_info(db_entity)
 
@@ -73,7 +77,8 @@ class ResultLog(object):
     def get_result_summaries_by_status(self, status):
         inbound_str = self.items["operation"]["inbound"]
         query = Query()
-        combined_query = (query.inbound == inbound_str) & (query.inbound_status_id == status.get_status_id())
+        combined_query = (query.inbound == inbound_str) & (
+            query.inbound_status_id == status.get_status_id())
         return self.search_db(combined_query)
 
     def get_result_summaries_by_results(self, results):
@@ -87,16 +92,6 @@ class ResultLog(object):
             summaries = db_entity.search(query)
             return summaries
         return None
-
-    def make_result_summary(self, inbound_status,
-                            outbound_status, status_string, hashtag,
-                            result):
-        summary = self.make_result_and_others_summary(status_string=status_string, hashtag=hashtag, result=result)
-        summary.update(self.make_status_summary("inbound",
-                                                status=inbound_status))
-        summary.update(self.make_status_summary("outbound",
-                                                status=outbound_status))
-        return summary
 
     def save_result_summaries(self, result_summaries):
         with TinyDB(self.file_name) as db_entity:
