@@ -102,3 +102,10 @@ ENV/
 
 # Visual Studio
 .vs/
+
+# Visual Studio code
+.vs/
+
+# local settings
+/*.ini
+/*.db
