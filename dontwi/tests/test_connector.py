@@ -12,7 +12,7 @@ from magic import Magic
 from ..config import Config
 from ..connector import MastodonConnector, TootStatus, TwitterConnector
 from ..status_text import StatusText
-from .test_config import remove_dummy_config_file
+from .test_config import remove_dummy_files
 from .test_result_log import make_dummy_conf_and_result_log
 from .test_status_text import dummy_toot_with_media
 
@@ -34,7 +34,7 @@ class TestConnector(unittest.TestCase):
             self.summary = make_dummy_conf_and_result_log(YOUR_MASTODON_FQDN)
 
     def tearDown(self):
-        remove_dummy_config_file()
+        remove_dummy_files()
 
     @unittest.skipUnless(YOUR_MASTODON_FQDN,
                          'YOUR_MASTODON_FQDN isn\'t defined')

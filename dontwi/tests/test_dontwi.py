@@ -3,10 +3,11 @@
 import unittest
 from sys import argv
 
+from ..__main__ import get_secret_and_save
 from ..config import Config
 from ..connector import MastodonConnector, TwitterConnector
-from ..dontwi import Dontwi, get_secret_and_save
-from .test_config import make_loaded_dummy_config, remove_dummy_config_file
+from ..dontwi import Dontwi
+from .test_config import make_loaded_dummy_config, remove_dummy_files
 from .test_result_log import make_dummy_conf_and_result_log
 
 
@@ -20,7 +21,7 @@ class TestDontwi(unittest.TestCase):
                 your_mastodon_fqdn=self.your_mastodon_fqdn)
 
     def tearDown(self):
-        remove_dummy_config_file()
+        remove_dummy_files()
 
     def test_run(self):
         dontwi = Dontwi(self.config)

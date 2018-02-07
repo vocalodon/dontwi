@@ -11,7 +11,7 @@ from tinydb import database
 from ..connector import TootStatus, TweetStatus
 from ..result_log import ResultLog
 from ..status_text import StatusText
-from .test_config import make_loaded_dummy_config, remove_dummy_config_file
+from .test_config import make_loaded_dummy_config, remove_dummy_files
 
 
 class TestStatusLog(unittest.TestCase):
@@ -20,7 +20,7 @@ class TestStatusLog(unittest.TestCase):
         pass
 
     def tearDown(self):
-        remove_dummy_config_file()
+        remove_dummy_files()
 
     def test_make_result_summary(self):
         config, h_tag, tt_status, tw_status,\

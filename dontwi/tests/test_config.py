@@ -14,7 +14,7 @@ class TestConfig(unittest.TestCase):
         pass
 
     def tearDown(self):
-        remove_dummy_config_file()
+        remove_dummy_files()
 
     def test_load(self):
         f_name = make_dummy_config_file()
@@ -99,7 +99,7 @@ handler = StreamHandler
     return f_name
 
 
-def remove_dummy_config_file():
+def remove_dummy_files():
     f_names = ['_dontwi.ini', '_dontwi_log.db']
     for f_name in f_names:
         if os.path.isfile(f_name):

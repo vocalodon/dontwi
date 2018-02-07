@@ -6,7 +6,7 @@ from json import dumps, loads
 
 from ..connector import TootStatus
 from ..status_text import StatusText
-from .test_config import make_loaded_dummy_config, remove_dummy_config_file
+from .test_config import make_loaded_dummy_config, remove_dummy_files
 
 
 class TestStatusText(unittest.TestCase):
@@ -15,7 +15,7 @@ class TestStatusText(unittest.TestCase):
         pass
 
     def tearDown(self):
-        remove_dummy_config_file()
+        remove_dummy_files()
 
     def test_make_tweet_string(self):
         conf = make_loaded_dummy_config()
