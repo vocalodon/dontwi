@@ -3,8 +3,8 @@ Description=Dontwi
 
 [Service]
 Type=simple
-ExecStart=/opt/dontwi/dontwi/dontwi.py
-WorkingDirectory=/opt/dontwi/dontwi
+ExecStart=/opt/dontwi/dontwi.sh
+WorkingDirectory=/opt/dontwi
 
 [Install]
 WantedBy=default.target
