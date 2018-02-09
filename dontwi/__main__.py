@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 """ Entry point module
 """
+from argparse import SUPPRESS, ArgumentParser
+
 from dontwi.config import Config
 from dontwi.dontwi import Dontwi
 from dontwi.result_log import ResultLog

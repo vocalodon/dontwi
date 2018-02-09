@@ -5,10 +5,7 @@
 import json
 import os
 import re
-from argparse import SUPPRESS, ArgumentParser
-from itertools import tee
 from logging import StreamHandler, getLogger
-from pprint import pprint
 
 from twython import TwythonError
 
