@@ -7,5 +7,5 @@ setuptools
 beautifulsoup4
 python_dateutil
 python_magic
-ptvsd
+
 
