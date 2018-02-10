@@ -2,7 +2,9 @@
 # -*- coding: utf-8 -*-
 """ Entry point module
 """
+import json
 from argparse import SUPPRESS, ArgumentParser
+from pprint import pprint
 
 from dontwi.config import Config
 from dontwi.dontwi import Dontwi
@@ -33,9 +35,9 @@ def dump_status_strings(conf):
     status_pr = StatusText(dontwi.config.outbound)
     result_log = ResultLog(dontwi.config.items)
     summaries = dontwi.summaries_to_be_listed(result_log=result_log,
-                                                              status_pr=status_pr,
-                                                              statuses=statuses,
-                                                              trigger_str=trigger_str)
+                                              status_pr=status_pr,
+                                              statuses=statuses,
+                                              trigger_str=trigger_str)
     status_dc = {a_status.get_status_id(): a_status.status["content"]
                  for a_status in statuses2}
     dump_strs = ["{0}\n{1}\n{2}\n[{3}]".format(a_summary["inbound_status_id"], a_summary["status_string"],
