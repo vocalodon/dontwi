@@ -109,3 +109,4 @@ ENV/
 # local settings
 /*.ini
 /*.db
+/.vscode
