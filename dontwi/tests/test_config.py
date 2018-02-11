@@ -69,7 +69,6 @@ outbound = dontwi
 type = mastodon
 api_base_url = https://your_mastodon.domain
 client_name = dontwi
-app_name = dontwi
 since =
 
 [endpoint dontwi]
