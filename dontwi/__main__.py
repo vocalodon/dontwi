@@ -102,7 +102,7 @@ def main():
                         help="Using UNTIL instead of until in config file")
     ar_prs.add_argument("--limit",
                         help="Using LIMIT insted of limit in config file")
-    ar_prs.add_argument("--save", help="", action='store_true')
+    #ar_prs.add_argument("--save", help="", action='store_true')
     ar_prs.add_argument("--dry-run",
                         help="Getting last status with the hashtag, " +
                         "but don't update status at outbound service.",
@@ -164,9 +164,9 @@ def main():
     if args.get_secret:
         get_secret_and_save(conf)
         exit()
-    if args.save:
-        conf.save()
-        exit()
+    #if args.save:
+    #    conf.save()
+    #    exit()
     if args.summary:
         show_log_db_summary(conf)
         exit()
