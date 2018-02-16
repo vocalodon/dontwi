@@ -67,31 +67,39 @@ You should modify ``dontwi.ini`` for your mastodon instance and twitter account.
 It is better not to write comments because of dontwi deletes these when saving mastodon's client keys.
 
 * operation section
-  - inbound
-    + Section name of the inbound endpoint parameters
-    + You can change this name. However, keep the name consistent with the section name of endpoint definition.       
-  - trigger
-    + Hashtag to detect status you want to transfer
-    + Set the hashtag with prefix `hashtag:` and without `#`.
-  - outbound
-    + Section name of the inbound endpoint parameters
-    +  See above note at inbound parameter.
+
+inbound
+    Section name of the inbound endpoint parameters
+    You can change this name. However, keep the name consistent with the section name of endpoint definition.       
+
+trigger
+    Hashtag to detect status you want to transfer
+    Set the hashtag with prefix `hashtag:` and without `#`.
+
+outbound
+    Section name of the inbound endpoint parameters
+    See above note at inbound parameter.
 
 * endpoint your_mastodon section
-  - type
-    + Type name of endpoint
-    + Set `mastodon`. In the future,we may implement another type support. 
-  - api_base_url
-    + Set base URL of your mastodon instance.
-  - client_name
-    + Client name at API accesse
+
+type
+    Type name of endpoint
+    Set `mastodon`. In the future,we may implement another type support. 
+
+api_base_url
+    Set base URL of your mastodon instance.
+
+client_name
+    Client name at API accesse
 
 * endpoint dontwi section
-  - type
-    + Type name of endpoint
-    + Set `twitter`. In the future,we may implement another type support.
-  - app_key, app_secret, oauth_token, oauth_token_secret
-    + Set twitter API key and related parameters. dontwi uses Twython_ library to access to Twitter. Please refer Twython's documents to obtain these keys.  
+
+type
+    Type name of endpoint
+    Set `twitter`. In the future,we may implement another type support.
+
+app_key, app_secret, oauth_token, oauth_token_secret
+    Set twitter API key and related parameters. dontwi uses Twython_ library to access to Twitter. Please refer Twython's documents to obtain these keys.  
 
 .. _Twython: https://github.com/ryanmcgrath/twython
 
