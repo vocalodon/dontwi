@@ -6,7 +6,7 @@ About
 ======
 
 dontwi_ is a status transporter script from Mastodon instances to Twitter. 
-It transports statuses trigered by hashtag in Mastodon public time line to a twitter account. 
+It transports statuses trigered by your prefered hashtag in Mastodon public time line to a twitter account with `#don_tw` hashtag. 
 It's aime is communication with mastodon users and the twitter's follers. 
 
 .. _dontwi: https://github.com/vocalodon/dontwi
@@ -14,7 +14,7 @@ It's aime is communication with mastodon users and the twitter's follers.
 Features
 --------
 
-- It supports CentOS 7.4 and Windows 10 with Python 3.4 and higher.
+- dontwi supports Python 3.4 and higher on CentOS 7.4 and Windows 10.
 - Easily to use with cron. It transports only one status each run. 
 - Statues with the specified tag in mastodon public local timeline are transferred.
 - Long text in mastodon status is truncated to fit for twitter.
@@ -25,9 +25,83 @@ Features
 Installation
 ============
 
-This product is not yet in the python package.
-Please put files to your working directory and edit configuration file named as  "dontwi.ini".
-More installation information will be coming soon.
+You can easily install dontwi package from this repository using pip3 via::
+
+    pip3 install https://github.com/vocalodon/dontwi/releases/download/v1.0.0rc1/dontwi-1.0-py3-none-any.whl
+
+You can also use setup.py to install from your local repository via::
+
+    python3 setup.py install
+
+Settings
+========
+
+1. Place the configureation file
+--------------------------------
+
+You should place the configuration file `dontwi.ini` to `/etc`. Search paths of `dontwi.ini` are `/etc` and current directory. You can use [`examples/dontwi.ini`](examples/dontwi.ini) as a template via::
+
+    [operation]
+    inbound = your_mastodon
+    trigger = hashtag:your_hashtag
+    outbound = dontwi
+
+    [endpoint your_mastodon]
+    type = mastodon
+    api_base_url = https://your_mastodon.domain
+    client_name = dontwi
+    since = 
+
+    [endpoint dontwi]
+    type = twitter
+    app_key = 
+    app_secret = 
+    oauth_token = 
+    oauth_token_secret = 
+    message_length = 280
+
+2. Modify configuration for your instance
+-----------------------------------------
+
+You should modify `dontwi.ini` for your mastodon instance and twitter account. Minimal modification of `dontwi.ini` are below.
+
+.. list-table:: operation section
+   :header-rows: 1
+
+    * - inbound
+      - Section name of the inbound endpoint parameters
+      - You can change this name. However, keep the name consistent with the section name of endpoint definition.       
+    * - trigger
+      - Hashtag to detect status you want to transfer
+      - Set the hashtag with prefix `hashtag:` and without `#`.
+    * - outbound
+      - Section name of the inbound endpoint parameters
+      - See above note at inbound parameter.
+
+.. list-table:: endpoint your_mastodon section
+   :header-rows: 1
+
+    * - type
+      - Type name of endpoint
+      - Set `mastodon`. In the future,we may implement another type support. 
+    * - api_base_url
+      - Set base URL of your mastodon instance.
+    * - client_name
+      - Client name at API accesse
+
+.. list-table:: endpoint dontwi
+   :header-rows: 1
+
+    * - type
+      - Type name of endpoint
+      - Set `twitter`. In the future,we may implement another type support.
+    * - app_key, app_secret, oauth_token, oauth_token_secret
+      - Set twitter API key and related parameters. dontwi uses Twython_ library to access to Twitter. Please refer Twython's documents to obtain these keys.  
+
+.. _Twython: https://github.com/ryanmcgrath/twython
+
+3. Check your configuration
+4. Add entry to crontab
 
 License
 =======
