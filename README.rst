@@ -116,8 +116,56 @@ It is better not to write comments because of dontwi deletes these when saving M
 3. Check your configuration
 ---------------------------
 
+You can confirm dontwi installation by a test run with ``--help`` option  via::
+
+    [root@centos7 ~]# dontwi --help
+    usage: dontwi [-h] [--config-file CONFIG_FILE] [--summary] [--trigger TRIGGER]
+                  [--since SINCE] [--until UNTIL] [--limit LIMIT] [--save]
+                  [--dry-run] [--get-secret] [--dump-status-strings] [--dump-log]
+                  [--dump-log-readable] [--remove-waiting] [--remove-wrong]
+                  [--db-file DB_FILE]
+
+    A status transporter from Mastodon to Twitter
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      --config-file CONFIG_FILE
+                            Using CONFIG_FILE instead of default.
+      --summary             Showing summary of log DB
+      --trigger TRIGGER     Using TRIGGER instead of trigger in config file
+      --since SINCE         Using SINCE instead of since in config file
+      --until UNTIL         Using UNTIL instead of until in config file
+      --limit LIMIT         Using LIMIT insted of limit in config file
+      --save
+      --dry-run             Getting last status with the hashtag, but don't update
+                            status at outbound service.
+      --get-secret          Getting client id and others from mastodon instance,
+                            and saving these in config file.
+      --dump-status-strings
+                            Dumping status strings to be marked as 'Waiting'
+                            status
+      --dump-log            Dumping all records in the log database.
+      --dump-log-readable   Dumping all records in the log database in a human-
+                            readable format.
+      --remove-waiting      Removinng records in 'Waiting' from the database
+      --remove-wrong        Removinng records in 'Waiting' from the database
+      --db-file DB_FILE     Using log DB_FILE instead of db_file of [result log]
+                            section in config file.
+
+When the dontwi installation has problems, above test run occurs some problems, for example, some library missing or version miss-match.
+
+For confirmation of ``dontwi.ini``,  run ``dontwi`` with ``--dry-run`` via::
+
+    [root@centos7 ~]# dontwi --dry-run
+    Test at 2018-02-17T14:04:05.826111+00:00 in:your_mastodon,4705377 out:, tag:どんつい
+
+When dontwi is executed with `` --dry-run``,  dontwi prepares to update the status on Twitter, saves the status in the log database, and exits. If there is some problems in ``dontwi.ini``, 
+    
+
 4. Add entry to crontab
 -----------------------
+
+
 
 License
 =======
