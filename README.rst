@@ -7,7 +7,7 @@ About
 
 dontwi_ is a status transporter script from Mastodon instances to Twitter. 
 It transports statuses triggered by your preferred hashtag in Mastodon public timeline to a twitter account with `#don_tw` hashtag. 
-Its aim is communication with mastodon users and the Twitter's follers. 
+Its aim is communication with Mastodon users and the Twitter's follers. 
 
 .. _dontwi: https://github.com/vocalodon/dontwi
 
@@ -16,9 +16,9 @@ Features
 
 - dontwi supports Python 3.4 and higher on CentOS 7.4 and Windows 10.
 - Easily to use with ``cron``. It transports only one status each run. 
-- Statues with the specified tag in mastodon public local timeline are transferred.
+- Statues with the specified tag in Mastodon public local timeline are transferred.
 - Long text in Mastodon status is truncated to fit for Twitter.
-- Username at mastodon is attached to Twitter status. 
+- Username at Mastodon is attached to Twitter status. 
 - The attached image is also transported with status text.
 - Statuses once transferred are logged in the database and will not be transferred again.
 
@@ -95,7 +95,7 @@ It is better not to write comments because of dontwi deletes these when saving M
     Set ``mastodon``. In the future, we may implement another type support. 
 
 ``api_base_url``
-    Set base URL of your mastodon instance.
+    Set base URL of your Mastodon instance.
 
 ``client_name``
     Client name at API access
@@ -118,10 +118,10 @@ It is better not to write comments because of dontwi deletes these when saving M
 
 You can confirm dontwi installation by a test run with ``--help`` option  via::
 
-    [root@centos7 ~]# dontwi --help
+    [root@centos7 opt]# dontwi --help
     usage: dontwi [-h] [--config-file CONFIG_FILE] [--summary] [--trigger TRIGGER]
-                  [--since SINCE] [--until UNTIL] [--limit LIMIT] [--save]
-                  [--dry-run] [--get-secret] [--dump-status-strings] [--dump-log]
+                  [--since SINCE] [--until UNTIL] [--limit LIMIT] [--dry-run]
+                  [--get-secret] [--dump-status-strings] [--dump-log]
                   [--dump-log-readable] [--remove-waiting] [--remove-wrong]
                   [--db-file DB_FILE]
 
@@ -130,37 +130,53 @@ You can confirm dontwi installation by a test run with ``--help`` option  via::
     optional arguments:
       -h, --help            show this help message and exit
       --config-file CONFIG_FILE
-                            Using CONFIG_FILE instead of default.
+                            Using CONFIG_FILE instead of the default.
       --summary             Showing summary of log DB
       --trigger TRIGGER     Using TRIGGER instead of trigger in config file
       --since SINCE         Using SINCE instead of since in config file
       --until UNTIL         Using UNTIL instead of until in config file
-      --limit LIMIT         Using LIMIT insted of limit in config file
-      --save
-      --dry-run             Getting last status with the hashtag, but don't update
-                            status at outbound service.
-      --get-secret          Getting client id and others from mastodon instance,
-                            and saving these in config file.
+      --limit LIMIT         Using LIMIT instead of limit in config file
+      --dry-run             Getting the last status with the hashtag, but don't
+                            send status to outbound service.
+      --get-secret          Getting client id and others from Mastodon instance,
+                            and saving these in the config file.
       --dump-status-strings
                             Dumping status strings to be marked as 'Waiting'
                             status
       --dump-log            Dumping all records in the log database.
       --dump-log-readable   Dumping all records in the log database in a human-
                             readable format.
-      --remove-waiting      Removinng records in 'Waiting' from the database
-      --remove-wrong        Removinng records in 'Waiting' from the database
+      --remove-waiting      Removing records in 'Waiting' from the database
+      --remove-wrong        Removing records in 'Waiting' from the database
       --db-file DB_FILE     Using log DB_FILE instead of db_file of [result log]
-                            section in config file.
+                            section in the config file.
 
-When the dontwi installation has problems, above test run occurs some problems, for example, some library missing or version miss-match.
+If some installation problems remain, you see the error message at above test.
 
 For confirmation of ``dontwi.ini``,  run ``dontwi`` with ``--dry-run`` via::
 
     [root@centos7 ~]# dontwi --dry-run
     Test at 2018-02-17T14:04:05.826111+00:00 in:your_mastodon,4705377 out:, tag:どんつい
 
-When dontwi is executed with `` --dry-run``,  dontwi prepares to update the status on Twitter, saves the status in the log database, and exits. If there is some problems in ``dontwi.ini``, 
-    
+When first time accessing, dontwi saves the access keys to Mastodon instance in ``config.ini``. 
+
+When you execute dontwi with ``--dry-run``,  dontwi gets a local timeline of Mastodon's instance and prepares statuses to Twitter. dontwi prepares to post the latest status to Twitter, however, does not until post. This process is logged with 'Test' label. Other status texts are stored with 'Waiting' label.
+
+You can see the number of these labels in log by ``--summary`` option via::
+
+    [root@centos7 opt]# dontwi --summary
+    dontwi version  1.0
+    log db  {'application': 'dontwi', 'version': '1.0'}
+    record number   25
+    Start   0
+    Waiting 23
+    Succeed 0
+    Failed  0
+    Test    2
+
+Before production operation, delete 'Test' labeled entry in log by ``--remove-wrong`` option via::
+
+    [root@centos7 opt]# dontwi --remove-wrong
 
 4. Add entry to crontab
 -----------------------
