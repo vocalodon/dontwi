@@ -86,7 +86,7 @@ def main():
     ar_prs = ArgumentParser(
         description="A status transporter from Mastodon to Twitter")
     ar_prs.add_argument("--config-file",
-                        help="Using CONFIG_FILE instead of default.")
+                        help="Using CONFIG_FILE instead of the default.")
     # ar_prs.add_argument("--init-config",help="Only generate config file when
     # not
     # exists.",action='store_true')
@@ -101,15 +101,15 @@ def main():
     ar_prs.add_argument("--until",
                         help="Using UNTIL instead of until in config file")
     ar_prs.add_argument("--limit",
-                        help="Using LIMIT insted of limit in config file")
+                        help="Using LIMIT instead of limit in config file")
     #ar_prs.add_argument("--save", help="", action='store_true')
     ar_prs.add_argument("--dry-run",
-                        help="Getting last status with the hashtag, " +
-                        "but don't update status at outbound service.",
+                        help="Getting the last status with the hashtag, " +
+                        "but don't send status to outbound service.",
                         action='store_true')
     ar_prs.add_argument("--get-secret",
-                        help="Getting client id and others from mastodon instance, " +
-                        "and saving these in config file.",
+                        help="Getting the access keys and others from Mastodon instance " +
+                        "and saving these in the config file.",
                         action="store_true")
     ar_prs.add_argument("--dump-status-strings",
                         help="Dumping status strings to be marked as 'Waiting' status",
@@ -121,13 +121,13 @@ def main():
                         help="Dumping all records in the log database in a human-readable format.",
                         action='store_true')
     ar_prs.add_argument("--remove-waiting",
-                        help="Removinng records in 'Waiting' from the database",
+                        help="Removing records in 'Waiting' from the database",
                         action='store_true')
     ar_prs.add_argument("--remove-wrong",
-                        help="Removinng records in 'Waiting' from the database",
+                        help="Removing records in 'Waiting' from the database",
                         action='store_true')
     ar_prs.add_argument("--db-file",
-                        help="Using log DB_FILE instead of db_file of [result log] section in config file.")
+                        help="Using log DB_FILE instead of db_file of [result log] section in the config file.")
     ar_prs.add_argument("--ptvsd-secret", help=SUPPRESS)
 
     args = ar_prs.parse_args()
