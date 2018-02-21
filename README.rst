@@ -15,12 +15,12 @@ Features
 --------
 
 - dontwi supports Python 3.4 and higher on CentOS 7.4 and Windows 10.
-- Easily to use with ``cron``. It transports only one status each run. 
+- Efficiently to use with ``cron``. It transports only one status each run. 
 - Statues with the specified tag in Mastodon public local timeline are transferred.
 - Long text in Mastodon status is truncated to fit for Twitter.
 - Username at Mastodon is attached to Twitter status. 
 - The attached image is also transported with status text.
-- Statuses once transferred are logged in the database and will not be transferred again.
+- Statuses recorded as sent has never been sent again.
 
 Installation
 ============
@@ -59,6 +59,9 @@ You should place the configuration file ``dontwi.ini`` to ``/etc``. Search paths
     oauth_token = 
     oauth_token_secret = 
     message_length = 280
+
+    [result log]
+    db_file = /var/db/dontwi_log.db
 
 ..  _`examples/dontwi.ini`: examples/dontwi.ini
 
@@ -113,6 +116,16 @@ It is better not to write comments because of dontwi deletes these when saving M
 
 .. _Twython: https://github.com/ryanmcgrath/twython
 
+``result log`` section
+++++++++++++++++++++++
+
+``db_file`` 
+    Log DB file path
+
+    Set log DB file path. Default is ``dontwi_log.db`` on current directory. We recommend using ``/var/db/dontwi_log.db`` according to FHS_.
+
+.. _FHS: https://wiki.linuxfoundation.org/lsb/fhs
+
 3. Check your configuration
 ---------------------------
 
@@ -138,8 +151,7 @@ You can confirm dontwi installation by a test run with ``--help`` option  via::
       --limit LIMIT         Using LIMIT instead of limit in config file
       --dry-run             Getting the last status with the hashtag, but don't
                             send status to outbound service.
-      --get-secret          Getting client id and others from Mastodon instance,
-                            and saving these in the config file.
+      --get-secret          Getting client id and others from Mastodon instance and saving these in the config file.
       --dump-status-strings
                             Dumping status strings to be marked as 'Waiting'
                             status
@@ -158,11 +170,13 @@ For confirmation of ``dontwi.ini``,  run ``dontwi`` with ``--dry-run`` via::
     [root@centos7 ~]# dontwi --dry-run
     Test at 2018-02-17T14:04:05.826111+00:00 in:your_mastodon,4705377 out:, tag:どんつい
 
-When first time accessing, dontwi saves the access keys to Mastodon instance in ``config.ini``. 
+When first accessing to your Mastodon instance, dontwi saves the access keys in ``config.ini``. 
 
-When you execute dontwi with ``--dry-run``,  dontwi gets a local timeline of Mastodon's instance and prepares statuses to Twitter. dontwi prepares to post the latest status to Twitter, however, does not until post. This process is logged with 'Test' label. Other status texts are stored with 'Waiting' label.
+When you execute dontwi with ``--dry-run``,  dontwi gets a tag timeline of your Mastodon instance via `Timelines API`_ and prepares statuses to Twitter. dontwi prepares to post the oldest status in API response to Twitter, however, does not until post. This process is logged with 'Test' label. Other status texts are queued for next run with 'Waiting' label. While remaining in the queue, post one status from the queue on each run.
 
-You can see the number of these labels in log by ``--summary`` option via::
+.. _`Timelines API`: https://github.com/tootsuite/documentation/blob/master/Using-the-API/API.md#timelines
+
+You can see the number of these labels in the log DB by ``--summary`` option via::
 
     [root@centos7 opt]# dontwi --summary
     dontwi version  1.0
@@ -174,11 +188,27 @@ You can see the number of these labels in log by ``--summary`` option via::
     Failed  0
     Test    2
 
-Before production operation, delete 'Test' labeled entry in log by ``--remove-wrong`` option via::
+Because labeled entries not specified with ``Waiting`` will not be processed, so delete the ``Test`` entries using ``--remove-wrong`` option before starting operation.::
 
     [root@centos7 opt]# dontwi --remove-wrong
 
+In this process, other failure-related entries will be deleted.
+
+After the above preparation, you can test run. Simply execute ``dontwi``::
+
+    [root@centos7 ~]# dontwi
+    Succeed at 2018-02-17T14:04:05.826111+00:00 in:your_mastodon,4705377 out:, tag:どんつい
+
 4. Add entry to crontab
+
+Let's add dontwi entry to crontab. Examaple is below::
+
+    */2  *  *  *  * root       /usr/bin/dontwi
+
+Above entry means run dontwi each 2 minute. Also, refer `examples/crontab`_/
+
+.. _`examples/crontab`: example/crontab
+
 -----------------------
 
 
@@ -205,4 +235,4 @@ Acknowledgements
 .. _`左手(acct:lefthand666@vocalodon.net)`: https://vocalodon.net/@lefthand666
 .. _`TOMOKI++(acct:tomoki@vocalodon.net)`: https://vocalodon.net/@tomoki
 .. _`rainyday(acct:decoybird@vocalodon.net)`: https://vocalodon.net/@decoybird
-.. _`vocalodon.net`: https://vocalodon.net
+.. _`vocalodon.net`: https://vocalodon.netfer 
