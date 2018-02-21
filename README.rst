@@ -205,9 +205,9 @@ Let's add dontwi entry to crontab. Examaple is below::
 
     */2  *  *  *  * root       /usr/bin/dontwi
 
-Above entry means run dontwi each 2 minute. Also, refer `examples/crontab`_/
+Above entry means run dontwi each 2 minute. Also, refer `examples/crontab`_.
 
-.. _`examples/crontab`: example/crontab
+.. _`examples/crontab`: examples/crontab
 
 -----------------------
 
