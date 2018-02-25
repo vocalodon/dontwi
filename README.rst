@@ -43,7 +43,7 @@ All of the contents that are text, link address, and hashtag are kept if the num
 
 ``#don_tw`` hashtag appended to the post to Twitter is not configurable. The reason why is aiming to organize federation timeline like Mastodon's one on Twitter by this fixed hashtag. If you want to use another hashtag, you can do by modification to source code directory. However, we hope you keep this hashtag for the federation timeline on Twitter.
 
-.. [#f1] This is only available for image files.
+.. [#f1] This is currently only available for image files.
 
 
 Installation
