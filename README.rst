@@ -29,11 +29,11 @@ dontwi transports statuses with a specific hashtag on Mastodon's local timeline.
 
 .. image:: images/sample_toot.png
 
-Sample status on Mastodon
+Fig.1 Sample status on Mastodon
 
 .. image:: images/result_tweet.png
 
-Transported status on Twitter
+Fig.2 Transported status on Twitter
 
 dontwi gets hashtag timeline each run using Mastodon API. When it finds the statuses with the target hashtag and stores in the log DB.
 
