@@ -22,6 +22,30 @@ Features
 - The attached image is also transported with status text.
 - Statuses recorded as sent has never been sent again.
 
+How it works
+============
+
+dontwi transports statuses with a specific hashtag on Mastodon's local timeline. For example, Fig.1 status on Mastodon is brought to Twitter like Fig.2.
+
+.. image:: images/sample_toot.png
+
+Sample status on Mastodon
+
+.. image:: images/result_tweet.png
+
+Transported status on Twitter
+
+dontwi gets hashtag timeline each run using Mastodon API. When it finds the statuses with the target hashtag and stores in the log DB.
+
+Next, it takes the oldest status from the log DB, posts the status to Twitter by API. It appends the contributor's address on Mastodon and ``#don_twi`` hashtag to the status. Also, it brings attached media files [#f1]_ which is shrunk for Twitter if the resolution exceeds Twitter's specifications.
+
+All of the contents that are text, link address, and hashtag are kept if the number of characters is within 280, which is the limit of Twitter. When the length exceeds the limit, dontwi trims text without modification link and hashtag as much as possible.
+
+``#don_twi`` hashtag appended to the post to Twitter is not configurable. The reason why is aiming to organize federation timeline like Mastodon's one on Twitter by this fixed hashtag. If you want to use another hashtag, you can do by modification to source code directory. However, we hope you keep this hashtag for the federation timeline on Twitter.
+
+.. [#f1] This is only available for image files.
+
+
 Installation
 ============
 
@@ -200,17 +224,20 @@ After the above preparation, you can test run. Simply execute ``dontwi``::
     Succeed at 2018-02-17T14:04:05.826111+00:00 in:your_mastodon,4705377 out:, tag:どんつい
 
 4. Add entry to crontab
+-----------------------
 
 Let's add dontwi entry to crontab. Examaple is below::
 
     */2  *  *  *  * root       /usr/bin/dontwi
 
-Above entry means run dontwi each 2 minute. Also, refer `examples/crontab`_.
+Above entry means run dontwi each 2 minute. Also, refer `examples/crontab`_/
 
-.. _`examples/crontab`: examples/crontab
+.. _`examples/crontab`: example/crontab
 
------------------------
+If you prefer ``systemd``, you can use `examples/dontwi.service`_ and `examples/dontwi.timer`_.
 
+.. _`examples/dontwi.service`: examples/dontwi.service
+.. _`examples/dontwi.timer`: examples/dontwi.timer
 
 
 License
