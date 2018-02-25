@@ -46,8 +46,8 @@ class Dontwi(object):
                 or system_log_cf["handler"] in ["StreamHandler", ""]:
             self.logger.addHandler(StreamHandler(os.sys.stdout))
         elif system_log_cf["handler"] == "JournalHandler":
-            from systemd.journal import JournalHandler
-            self.logger.addHandler(JournalHandler())
+            from systemd import journal
+            self.logger.addHandler(journal.JournaldLogHandler())
         else:
             raise DontwiNotImplementedError
         return False
