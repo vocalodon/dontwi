@@ -35,13 +35,13 @@ Fig.1 Sample status on Mastodon
 
 Fig.2 Transported status on Twitter
 
-dontwi gets hashtag timeline each run using Mastodon API. When it finds the statuses with the target hashtag and stores in the log DB.
+dontwi gets hashtag timeline each run using Mastodon API. When it finds statuses with a specified hashtag and ``#don_tw``, it stores these statues in the log DB.
 
-Next, it takes the oldest status from the log DB, posts the status to Twitter by API. It appends the contributor's address on Mastodon and ``#don_twi`` hashtag to the status. Also, it brings attached media files [#f1]_ which is shrunk for Twitter if the resolution exceeds Twitter's specifications.
+Next, it takes the oldest status from the log DB, posts the status to Twitter by API. It appends the contributor's address on Mastodon and ``#don_tw`` hashtag to the status. Also, it brings attached media files [#f1]_ which is shrunk for Twitter if the resolution exceeds Twitter's specifications.
 
 All of the contents that are text, link address, and hashtag are kept if the number of characters is within 280, which is the limit of Twitter. When the length exceeds the limit, dontwi trims text without modification link and hashtag as much as possible.
 
-``#don_twi`` hashtag appended to the post to Twitter is not configurable. The reason why is aiming to organize federation timeline like Mastodon's one on Twitter by this fixed hashtag. If you want to use another hashtag, you can do by modification to source code directory. However, we hope you keep this hashtag for the federation timeline on Twitter.
+``#don_tw`` hashtag appended to the post to Twitter is not configurable. The reason why is aiming to organize federation timeline like Mastodon's one on Twitter by this fixed hashtag. If you want to use another hashtag, you can do by modification to source code directory. However, we hope you keep this hashtag for the federation timeline on Twitter.
 
 .. [#f1] This is only available for image files.
 
