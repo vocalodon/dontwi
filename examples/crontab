@@ -12,4 +12,10 @@ MAILTO=root
 # |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
 # |  |  |  |  |
 # *  *  *  *  * user-name  command to be executed
-*/2  *  *  *  * root       /opt/dontwi/dontwi.sh
+*/2  *  *  *  * root       /usr/bin/dontwi
+# Above entry is usual case.
+#
+#*/2  *  *  *  * root       /opt/dontwi/dontwi.sh
+# When you want to place dontwi.ini in not default another directory, you can use
+# '--config-file' option. For example above entry using 'dontwi.sh' which executes
+# '/usr/bin/dontwi' with '--config-file' option.

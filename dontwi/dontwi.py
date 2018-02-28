@@ -45,9 +45,9 @@ class Dontwi(object):
         if not "handler" in system_log_cf\
                 or system_log_cf["handler"] in ["StreamHandler", ""]:
             self.logger.addHandler(StreamHandler(os.sys.stdout))
-        elif system_log_cf["handler"] == "JournalHandler":
-            from systemd.journal import JournalHandler
-            self.logger.addHandler(JournalHandler())
+        elif system_log_cf["handler"] == "JournaldLogHandler":
+            from systemd import journal
+            self.logger.addHandler(journal.JournaldLogHandler())
         else:
             raise DontwiNotImplementedError
         return False
@@ -60,7 +60,7 @@ class Dontwi(object):
             # results's 2nd.  condition which match to "Start" is for
             # fail-safe.
             if not result_log.has_result_of_status(
-                    status=a_status, results=["Succeed", "Start", "Failed"]):
+                    status=a_status, results=["Succeed", "Start", "Failed", "Test"]):
                 st_str = status_pr.make_tweet_string_from_toot(
                     a_status, hashtag=trigger_str)
                 rs_str = "Waiting"
