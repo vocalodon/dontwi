@@ -1,9 +1,11 @@
 [Unit]
 Description=Dontwi
+After=network.target
 
 [Service]
 Type=simple
-ExecStart=/opt/dontwi/dontwi.sh
+User=root
+ExecStart=/usr/bin/dontwi
 WorkingDirectory=/opt/dontwi
 
 [Install]
