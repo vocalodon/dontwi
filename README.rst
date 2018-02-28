@@ -232,7 +232,7 @@ Let's add dontwi entry to crontab. Examaple is below::
 
 Above entry means run dontwi each 2 minute. Also, refer `examples/crontab`_/
 
-.. _`examples/crontab`: example/crontab
+.. _`examples/crontab`: examples/crontab
 
 If you prefer ``systemd``, you can use `examples/dontwi.service`_ and `examples/dontwi.timer`_.
 
@@ -262,4 +262,4 @@ Acknowledgements
 .. _`左手(acct:lefthand666@vocalodon.net)`: https://vocalodon.net/@lefthand666
 .. _`TOMOKI++(acct:tomoki@vocalodon.net)`: https://vocalodon.net/@tomoki
 .. _`rainyday(acct:decoybird@vocalodon.net)`: https://vocalodon.net/@decoybird
-.. _`vocalodon.net`: https://vocalodon.netfer 
+.. _`vocalodon.net`: https://vocalodon.net
