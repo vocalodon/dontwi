@@ -230,12 +230,9 @@ Let's add dontwi entry to crontab. Examaple is below::
 
     */2  *  *  *  * root       /usr/bin/dontwi
 
-Above entry means run dontwi each 2 minute. Also, refer `examples/crontab`_/
+Above entry means run dontwi each 2 minute. Also, refer `examples/crontab`_. If you prefer ``systemd``, you can use `examples/dontwi.service`_ and `examples/dontwi.timer`_.
 
 .. _`examples/crontab`: examples/crontab
-
-If you prefer ``systemd``, you can use `examples/dontwi.service`_ and `examples/dontwi.timer`_.
-
 .. _`examples/dontwi.service`: examples/dontwi.service
 .. _`examples/dontwi.timer`: examples/dontwi.timer
 
