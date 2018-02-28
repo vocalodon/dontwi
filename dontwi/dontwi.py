@@ -45,7 +45,7 @@ class Dontwi(object):
         if not "handler" in system_log_cf\
                 or system_log_cf["handler"] in ["StreamHandler", ""]:
             self.logger.addHandler(StreamHandler(os.sys.stdout))
-        elif system_log_cf["handler"] == "JournalHandler":
+        elif system_log_cf["handler"] == "JournaldLogHandler":
             from systemd import journal
             self.logger.addHandler(journal.JournaldLogHandler())
         else:
