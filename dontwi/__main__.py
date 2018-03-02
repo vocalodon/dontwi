@@ -95,13 +95,13 @@ def main():
                         help="Showing summary of log DB",
                         action="store_true")
     ar_prs.add_argument("--trigger",
-                        help="Using TRIGGER instead of trigger in config file")
+                        help="Using TRIGGER instead of trigger in the config file")
     ar_prs.add_argument("--since",
-                        help="Using SINCE instead of since in config file")
+                        help="Using SINCE instead of since in the config file")
     ar_prs.add_argument("--until",
-                        help="Using UNTIL instead of until in config file")
+                        help="Using UNTIL instead of until in the config file")
     ar_prs.add_argument("--limit",
-                        help="Using LIMIT instead of limit in config file")
+                        help="Using LIMIT instead of limit in the config file")
     #ar_prs.add_argument("--save", help="", action='store_true')
     ar_prs.add_argument("--dry-run",
                         help="Getting the last status with the hashtag, " +

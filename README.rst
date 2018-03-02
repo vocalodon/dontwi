@@ -7,9 +7,10 @@ About
 
 dontwi_ is a status transporter script from Mastodon instances to Twitter. 
 It transports statuses triggered by your preferred hashtag in Mastodon public timeline to a twitter account with `#don_tw` hashtag. 
-Its aim is communication with Mastodon users and the Twitter's follers. 
+Its aim is communication with Mastodon users and the Twitter's follers. This idea was described on `Mastodon 2 Advent Calendar 2017`_ by `TOMOKI++(@tomoki@vocalodon.net)`_.
 
 .. _dontwi: https://github.com/vocalodon/dontwi
+.. _`Mastodon 2 Advent Calendar 2017`: http://info.vocalodon.net/notes/dontwi.html
 
 Features
 --------
@@ -51,14 +52,14 @@ Installation
 
 You can easily install dontwi package from this repository using ``pip3`` via::
 
-    pip3 install https://github.com/vocalodon/dontwi/releases/download/v1.0.0rc1/dontwi-1.0-py3-none-any.whl
+    pip3 install https://github.com/vocalodon/dontwi/releases/download/v1.0.0rc2/dontwi-1.0-py3-none-any.whl
 
 You can also use ``setup.py`` to install from your local repository via::
 
     python3 setup.py install
 
-Settings
-========
+Setting up
+==========
 
 1. Place the configuration file
 --------------------------------
@@ -117,7 +118,7 @@ It is better not to write comments because of dontwi deletes these when saving M
 ++++++++++++++++++++++++++++++++++
 
 ``type``
-    Type name of endpoint
+    Type name of the endpoint
 
     Set ``mastodon``. In the future, we may implement another type support. 
 
@@ -131,7 +132,7 @@ It is better not to write comments because of dontwi deletes these when saving M
 +++++++++++++++++++++++++++
 
 ``type``
-    Type name of endpoint
+    Type name of the endpoint
 
     Set ``twitter``. In the future, we may implement another type support.
 
@@ -157,35 +158,37 @@ You can confirm dontwi installation by a test run with ``--help`` option  via::
 
     [root@centos7 opt]# dontwi --help
     usage: dontwi [-h] [--config-file CONFIG_FILE] [--summary] [--trigger TRIGGER]
-                  [--since SINCE] [--until UNTIL] [--limit LIMIT] [--dry-run]
-                  [--get-secret] [--dump-status-strings] [--dump-log]
-                  [--dump-log-readable] [--remove-waiting] [--remove-wrong]
-                  [--db-file DB_FILE]
+              [--since SINCE] [--until UNTIL] [--limit LIMIT] [--dry-run]
+              [--get-secret] [--dump-status-strings] [--dump-log]
+              [--dump-log-readable] [--remove-waiting] [--remove-wrong]
+              [--db-file DB_FILE]
 
     A status transporter from Mastodon to Twitter
 
     optional arguments:
       -h, --help            show this help message and exit
       --config-file CONFIG_FILE
-                            Using CONFIG_FILE instead of the default.
+                        Using CONFIG_FILE instead of the default.
       --summary             Showing summary of log DB
-      --trigger TRIGGER     Using TRIGGER instead of trigger in config file
-      --since SINCE         Using SINCE instead of since in config file
-      --until UNTIL         Using UNTIL instead of until in config file
-      --limit LIMIT         Using LIMIT instead of limit in config file
+      --trigger TRIGGER     Using TRIGGER instead of trigger in the config file
+      --since SINCE         Using SINCE instead of since in the config file
+      --until UNTIL         Using UNTIL instead of until in the config file
+      --limit LIMIT         Using LIMIT instead of limit in the config file
       --dry-run             Getting the last status with the hashtag, but don't
-                            send status to outbound service.
-      --get-secret          Getting client id and others from Mastodon instance and saving these in the config file.
+                        send status to outbound service.
+      --get-secret          Getting the access keys and others from Mastodon
+                        instance and saving these in the config file.
       --dump-status-strings
-                            Dumping status strings to be marked as 'Waiting'
-                            status
+                        Dumping status strings to be marked as 'Waiting'
+                        status
       --dump-log            Dumping all records in the log database.
       --dump-log-readable   Dumping all records in the log database in a human-
-                            readable format.
+                        readable format.
       --remove-waiting      Removing records in 'Waiting' from the database
       --remove-wrong        Removing records in 'Waiting' from the database
       --db-file DB_FILE     Using log DB_FILE instead of db_file of [result log]
-                            section in the config file.
+                        section in the config file.
+
 
 If some installation problems remain, you see the error message at above test.
 
@@ -223,8 +226,8 @@ After the above preparation, you can test run. Simply execute ``dontwi``::
     [root@centos7 ~]# dontwi
     Succeed at 2018-02-17T14:04:05.826111+00:00 in:your_mastodon,4705377 out:, tag:どんつい
 
-4. Add entry to crontab
------------------------
+4. Add ``dontwi`` entry to crontab
+------------------------------------
 
 Let's add dontwi entry to crontab. Examaple is below::
 
@@ -236,27 +239,26 @@ Above entry means run dontwi each 2 minute. Also, refer `examples/crontab`_. If 
 .. _`examples/dontwi.service`: examples/dontwi.service
 .. _`examples/dontwi.timer`: examples/dontwi.timer
 
-
 License
 =======
 
-Copyright  2017 `A.しおまねき(acct:a_shiomaneki@vocalodon.net)`_
+Copyright  2017 `A.しおまねき(@a_shiomaneki@vocalodon.net)`_
 
 Dontwi is licensed under the `GNU General Public License v3.0`_.
 See `LICENSE`_ for the troposphere full license text.
 
 .. _`GNU General Public License v3.0`: https://www.gnu.org/licenses/gpl-3.0.en.html
 .. _`LICENSE`: https://github.com/vocalodon/dontwi/blob/master/LICENSE
-.. _`A.しおまねき(acct:a_shiomaneki@vocalodon.net)`: https://vocalodon.net/@a_shiomaneki
+.. _`A.しおまねき(@a_shiomaneki@vocalodon.net)`: https://vocalodon.net/@a_shiomaneki
 
 Acknowledgements
 ================
 
-- `左手(acct:lefthand666@vocalodon.net)`_, `TOMOKI++(acct:tomoki@vocalodon.net)`_ and users in `vocalodon.net`_ for original ideas and a lot of motivation.
-- `TOMOKI++(acct:tomoki@vocalodon.net)`_ for providing the server and testing.
-- `rainyday(acct:decoybird@vocalodon.net)`_ for providing initial OAuth code.
+- `左手(@lefthand666@vocalodon.net)`_, `TOMOKI++(@tomoki@vocalodon.net)`_ and users in `vocalodon.net`_ for original ideas and a lot of motivation.
+- `TOMOKI++(@tomoki@vocalodon.net)`_ for providing the server and testing.
+- `rainyday(@decoybird@vocalodon.net)`_ for providing initial OAuth code.
 
-.. _`左手(acct:lefthand666@vocalodon.net)`: https://vocalodon.net/@lefthand666
-.. _`TOMOKI++(acct:tomoki@vocalodon.net)`: https://vocalodon.net/@tomoki
-.. _`rainyday(acct:decoybird@vocalodon.net)`: https://vocalodon.net/@decoybird
+.. _`左手(@lefthand666@vocalodon.net)`: https://vocalodon.net/@lefthand666
+.. _`TOMOKI++(@tomoki@vocalodon.net)`: https://vocalodon.net/@tomoki
+.. _`rainyday(@decoybird@vocalodon.net)`: https://vocalodon.net/@decoybird
 .. _`vocalodon.net`: https://vocalodon.net
