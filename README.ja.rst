@@ -48,12 +48,12 @@ dontwiは実行毎にMastodon APIを用いてはハッシュタグタイムラ�
 次にログDBにある最も古いstatusを取り出し，TwitterにAPIを用いて投稿します．このstatusには投稿者のMastodonにおけるアドレスとハッシュタグ``#don_tw``が付記されます．
 statusに添付されたメディアファイル [#f1]_ もTwitterの制約に合わせてリサイズしてから一緒に投稿されます．
 
-All of the contents that are text, link address, and hashtag are kept if the number of characters is within 280, which is the limit of Twitter. When the length exceeds the limit, dontwi trims text without modification link and hashtag as much as possible.
+ツイッターの文字数上限280文字 [#len]_ 以内ならば，status中のテキスト，リンク，ハッシュタグはそのまま維持されます．この文字数上限を越えている場合は，可能な限りリンクとハッシュタグを維持したままテキストだけが切り詰められます．
 
-``#don_tw`` hashtag appended to the post to Twitter is not configurable. The reason why is aiming to organize federation timeline like Mastodon's one on Twitter by this fixed hashtag. If you want to use another hashtag, you can do by modification to source code directory. However, we hope you keep this hashtag for the federation timeline on Twitter.
+Twitterに投稿される際に付記されるハッシュタク ``#don_tw`` は，設定により変更することはできません．これは，このハッシュタグによりTwitter上で連合タイムラインを形成される事を意図している空です．もし他のハッシュタグに変更したい場合はソースコードを直接修正してください．ですが，できましたらTwitter上の連合タイムライン形成にご協力いただけないでしょうか.
 
 .. [#f1] This is currently only available for image files.
-
+.. [#len] 全角文字は半角文字2文字として計上
 
 インストール
 ============
@@ -126,26 +126,26 @@ pip3を用いてこのレポジトリにあるパッケージを簡単にイン�
 +++++++++++++++++++++++++++++++++++++
 
 ``type``
-    Type name of the endpoint
+    発信元のタイプ
 
-    Set ``mastodon``. In the future, we may implement another type support. 
+    ``mastodon`` と書いてください．なお，将来のバージョンでは他のタイプもサポートれるかもしれません． 
 
 ``api_base_url``
-    Set base URL of your Mastodon instance.
+    MastodonインスタンスのベースURLを書いてください．
 
 ``client_name``
-    Client name at API access
+    APIアクセスの際のクライアント名を書いてください．
 
 ``endpoint dontwi`` セクション
 ++++++++++++++++++++++++++++++
 
 ``type``
-    Type name of the endpoint
+    着信先のタイプ
 
-    Set ``twitter``. In the future, we may implement another type support.
+    ``twitter``. と書いてださい．なお，将来のバージョンでは他のタイプもサポートれるかもしれません． 
 
 ``app_key``, ``app_secret``, ``oauth_token``, ``oauth_token_secret``
-    Set Twitter API key and related parameters. dontwi uses Twython_ library to access to Twitter. Please refer Twython's documents to obtain these keys.  
+    TwitterのAPIキーと関連パラメーターを書いてください．dontwiはTwitterのAPIアクセスに Twython_ ライブラリを用いていますので，これらの取得方法については Twythonのドキュメントを参照してください．  
 
 .. _Twython: https://github.com/ryanmcgrath/twython
 
@@ -153,16 +153,16 @@ pip3を用いてこのレポジトリにあるパッケージを簡単にイン�
 +++++++++++++++++++++++++
 
 ``db_file`` 
-    Log DB file path
+    ログDBファイルへのパス
 
-    Set log DB file path. Default is ``dontwi_log.db`` on current directory. We recommend using ``/var/db/dontwi_log.db`` according to FHS_.
+    ログDBファイルへのパスを書いてください．デフォルトはカレントディレクトリの ``dontwi_log.db`` です．FHS_ に準拠した ``/var/db/dontwi_log.db`` とすることをお勧めします． 
 
 .. _FHS: https://wiki.linuxfoundation.org/lsb/fhs
 
 3. 設定の確認
 ---------------------------
 
-You can confirm dontwi installation by a test run with ``--help`` option  via::
+インストールが成功したかどうか，``--help`` オプションをつけて ``dontwi`` を起動することで確認できます．::
 
     [root@centos7 opt]# dontwi --help
     usage: dontwi [-h] [--config-file CONFIG_FILE] [--summary] [--trigger TRIGGER]
@@ -198,14 +198,14 @@ You can confirm dontwi installation by a test run with ``--help`` option  via::
                         section in the config file.
 
 
-If some installation problems remain, you see the error message at above test.
+もし何らかの問題が残されているならこの段階でエラーメッセージが表示されるでしょう．
 
-For confirmation of ``dontwi.ini``,  run ``dontwi`` with ``--dry-run`` via::
+``dontwi.ini`` を確認するには ``dontwi`` を ``--dry-run`` オプションを付けて起動することで行えます::
 
     [root@centos7 ~]# dontwi --dry-run
     Test at 2018-02-17T14:04:05.826111+00:00 in:your_mastodon,4705377 out:, tag:どんつい
 
-When first accessing to your Mastodon instance, dontwi saves the access keys in ``config.ini``. 
+最初にMastodonインスタンスにアクセスしたさいにdontwiはアクセスキーを ``config.ini`` に保存します．
 
 When you execute dontwi with ``--dry-run``,  dontwi gets a tag timeline of your Mastodon instance via `Timelines API`_ and prepares statuses to Twitter. dontwi prepares to post the oldest status in API response to Twitter, however, does not until post. This process is logged with 'Test' label. Other status texts are queued for next run with 'Waiting' label. While remaining in the queue, post one status from the queue on each run.
 
@@ -262,7 +262,7 @@ See `LICENSE`_ for the troposphere full license text.
 謝辞
 ================
 
-- `左手(@lefthand666@vocalodon.net)`_ さん, `TOMOKI++(@tomoki@vocalodon.net)`_ さんと`vocalodon.net`_ のユーザーの皆様からは元となったアイディアとモチベーションを頂いたとこ，感謝申し上げます．．
+- `左手(@lefthand666@vocalodon.net)`_ さん, `TOMOKI++(@tomoki@vocalodon.net)`_ さんと`vocalodon.net`_ のユーザーの皆様からは元となったアイディアとモチベーションを頂いたとこ，感謝申し上げます．
 - `TOMOKI++(@tomoki@vocalodon.net)`_ for providing the server and testing.
 - `rainyday(@decoybird@vocalodon.net)`_ for providing initial OAuth code.
 
