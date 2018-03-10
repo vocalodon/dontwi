@@ -110,7 +110,7 @@ It is better not to write comments because of dontwi deletes these when saving M
     Set the hashtag with prefix ``hashtag:`` and without ``#`` mark.
 
 ``outbound``
-    Section name of the inbound endpoint parameters
+    Section name of the outbound endpoint parameters
 
     See above note for ``inbound`` setting.
 
