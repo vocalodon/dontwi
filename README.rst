@@ -52,7 +52,7 @@ Installation
 
 You can easily install dontwi package from this repository using ``pip3`` via::
 
-    pip3 install https://github.com/vocalodon/dontwi/releases/download/v1.0.0rc2/dontwi-1.0-py3-none-any.whl
+    pip3 install https://github.com/vocalodon/dontwi/releases/download/v1.0.0/dontwi-1.0-py3-none-any.whl
 
 You can also use ``setup.py`` to install from your local repository via::
 
