@@ -213,11 +213,11 @@ pip3を用いてこのレポジトリにあるパッケージを簡単にイン�
     Test at 2018-02-17T14:04:05.826111+00:00 in:your_mastodon,4705377 out:, tag:どんつい
 
 
-最初にMastodonインスタンスにアクセスしたさいにdontwiはアクセスキーを ``config.ini`` に保存します．
+最初にMastodonインスタンスにアクセスする際にdontwiはアクセスキーを ``config.ini`` に保存します．
 
 dontwiを ``--dry-run``  オプションで起動すると，dontwiはMastodonの `Timelines API`_ を用いてタグタイムラインを取得し，Twitterに送るstatusの下準備を行います．
 
-dontwiはAPIから取得したstatusの最も古い物をTwitterに投稿する準備まで行いますが，そこまでしか処理を行いません．
+dontwiはAPIから取得したstatusの最も古い物をTwitterに投稿する準備まで行いますが，それ以降の処理を行いません．
 この処理は'Test'というラベルと付けてログDBに記録されます．
 その他のstatusは'Waiting'というラベルを付けて保存されます．
 これらのstatusは次回実行時に一つずつ投稿処理が行われます．
