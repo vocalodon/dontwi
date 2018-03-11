@@ -207,11 +207,16 @@ pip3を用いてこのレポジトリにあるパッケージを簡単にイン�
 
 最初にMastodonインスタンスにアクセスしたさいにdontwiはアクセスキーを ``config.ini`` に保存します．
 
-When you execute dontwi with ``--dry-run``,  dontwi gets a tag timeline of your Mastodon instance via `Timelines API`_ and prepares statuses to Twitter. dontwi prepares to post the oldest status in API response to Twitter, however, does not until post. This process is logged with 'Test' label. Other status texts are queued for next run with 'Waiting' label. While remaining in the queue, post one status from the queue on each run.
+dontwiを``--dry-run`` オプションで起動すると，dontwiはMastodonの `Timelines API`_ を用いてタグタイムラインを取得し，Twitterに送るstatusの下準備を行います．
+
+dontwiはAPIから取得したstatusの最も古い物をTwitterに投稿する準備まで行いますが，そこまでしか処理を行いません．
+この処理は'Test'というラベルと付けてログDBに記録されます．
+その他のstatusは'Waiting'というラベルを付けて保存されます．
+これらのstatusは次回実行時に一つずつ投稿処理が行われます．
 
 .. _`Timelines API`: https://github.com/tootsuite/documentation/blob/master/Using-the-API/API.md#timelines
 
-You can see the number of these labels in the log DB by ``--summary`` option via::
+これらのラベルが付いた記録がログDBに何件あるかは ``--summary`` オプションをつけて実行することで確認できます．::
 
     [root@centos7 opt]# dontwi --summary
     dontwi version  1.0
@@ -223,13 +228,13 @@ You can see the number of these labels in the log DB by ``--summary`` option via
     Failed  0
     Test    2
 
-Because labeled entries not specified with ``Waiting`` will not be processed, so delete the ``Test`` entries using ``--remove-wrong`` option before starting operation.::
+ ``Waiting`` ラベルが付けられたエントリー以外の投稿は行われないので ``Test`` エントリーは削除する必用があるでしょう．これは ``--remove-wrong`` オプションを付けて実行することで行えます::
 
     [root@centos7 opt]# dontwi --remove-wrong
 
-In this process, other failure-related entries will be deleted.
+この実行により他のエラー関連のエントリーも削除されます．
 
-After the above preparation, you can test run. Simply execute ``dontwi``::
+以上の確認と準備ができたらオプションを付けずに ``dontwi`` を実行してください::
 
     [root@centos7 ~]# dontwi
     Succeed at 2018-02-17T14:04:05.826111+00:00 in:your_mastodon,4705377 out:, tag:どんつい
@@ -237,11 +242,13 @@ After the above preparation, you can test run. Simply execute ``dontwi``::
 4. ``dontwi`` のエントリーをcrontabに加える
 ----------------------------------------------
 
-Let's add dontwi entry to crontab. Examaple is below::
+dontwiを実行するエントリーをcrontabに加えましょう．例としてはこんな感じでしょう::
 
     */2  *  *  *  * root       /usr/bin/dontwi
 
-Above entry means run dontwi each 2 minute. Also, refer `examples/crontab`_. If you prefer ``systemd``, you can use `examples/dontwi.service`_ and `examples/dontwi.timer`_.
+上記のエントリーは2分毎に ``dontwi`` を起動しています． `examples/crontab`_ も参考にしてください．
+
+もし  ``systemd`` の方が好みなら  `examples/dontwi.service`_ と  `examples/dontwi.timer`_ も参考にしてください．
 
 .. _`examples/crontab`: examples/crontab
 .. _`examples/dontwi.service`: examples/dontwi.service
@@ -263,8 +270,8 @@ See `LICENSE`_ for the troposphere full license text.
 ================
 
 - `左手(@lefthand666@vocalodon.net)`_ さん, `TOMOKI++(@tomoki@vocalodon.net)`_ さんと`vocalodon.net`_ のユーザーの皆様からは元となったアイディアとモチベーションを頂いたとこ，感謝申し上げます．
-- `TOMOKI++(@tomoki@vocalodon.net)`_ for providing the server and testing.
-- `rainyday(@decoybird@vocalodon.net)`_ for providing initial OAuth code.
+- `TOMOKI++(@tomoki@vocalodon.net)`_ さんには運用とテストにについてご協力いただきました．
+- `rainyday(@decoybird@vocalodon.net)`_ さんからは最初のOAuthコードを頂きました．
 
 .. _`左手(@lefthand666@vocalodon.net)`: https://vocalodon.net/@lefthand666
 .. _`TOMOKI++(@tomoki@vocalodon.net)`: https://vocalodon.net/@tomoki
