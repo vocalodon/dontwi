@@ -14,10 +14,14 @@ Twitterに投稿する際にはMastodonにおけるユーザー名と`#don_tw`�
 このハッシュタグを付ける目的は，Twitter上でこのハッシュタグによる擬似的な連合を形成するすることです．
 この狙いについては `TOMOKI++(@tomoki@vocalodon.net)`_ が `Mastodon 2 Advent Calendar 2017`_  でが説明しています．
 
+*Read this in ``English``_ *
+
 .. [#about_status] Twitterにおけるツイート，Mastodonにおけるトゥートは，APIドキュメント内でstatusと表現されています．
 
 .. _dontwi: https://github.com/vocalodon/dontwi
 .. _`Mastodon 2 Advent Calendar 2017`: http://info.vocalodon.net/notes/dontwi.html
+.. _``English`` :: README.rst
+.. _``日本語`` :: README.ja.rst
 
 特徴
 --------
