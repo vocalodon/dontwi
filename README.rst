@@ -14,8 +14,8 @@ Its aim is communication with Mastodon users and the Twitter's follers. This ide
 
 .. _dontwi: https://github.com/vocalodon/dontwi
 .. _`Mastodon 2 Advent Calendar 2017`: http://info.vocalodon.net/notes/dontwi.html
-.. _`English` :: README.rst
-.. _`日本語` :: README.ja.rst
+.. _`English` : README.rst
+.. _`日本語` : README.ja.rst
 
 Features
 --------
