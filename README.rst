@@ -9,7 +9,7 @@ dontwi_ is a status transporter script from Mastodon instances to Twitter.
 It transports statuses triggered by your preferred hashtag in Mastodon public timeline to a twitter account with `#don_tw` hashtag. 
 Its aim is communication with Mastodon users and the Twitter's follers. This idea was described on `Mastodon 2 Advent Calendar 2017`_ by `TOMOKI++(@tomoki@vocalodon.net)`_.
 
-* ``日本語``_ で読む *
+``日本語``_ *で読む*
 
 
 .. _dontwi: https://github.com/vocalodon/dontwi
