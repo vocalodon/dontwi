@@ -7,10 +7,10 @@ dontwi
 
 dontwi_ はMastodonのハッシュタグ付きのstatus [#about_status]_ をTwitterに転送するスクリプトです．
 
-転送トリガーには固定ハッシュタグ`#don_tw`と，他にお好みのハッシュタグを設定することができます．
+転送トリガーには固定ハッシュタグ ``#don_tw`` と，他にお好みのハッシュタグを設定することができます．
 dontwiは，これらのハッシュタグが付いたstatusを公開ローカルタイムラインから見つけて転送を行います．
 
-Twitterに投稿する際にはMastodonにおけるユーザー名と`#don_tw`が付記されます．
+Twitterに投稿する際にはMastodonにおけるユーザー名と ``#don_tw`` が付記されます．
 このハッシュタグを付ける目的は，Twitter上でこのハッシュタグによる擬似的な連合を形成するすることです．
 この狙いについては `TOMOKI++(@tomoki@vocalodon.net)`_ が `Mastodon 2 Advent Calendar 2017`_  でが説明しています．
 
@@ -23,6 +23,7 @@ Twitterに投稿する際にはMastodonにおけるユーザー名と`#don_tw`�
 .. _`English` : README.rst
 .. _`日本語` : README.ja.rst
 
+
 特徴
 --------
 
@@ -32,7 +33,8 @@ Twitterに投稿する際にはMastodonにおけるユーザー名と`#don_tw`�
 - Mastodonに投稿された長いテキストはTwitterの制限に合わせて切り詰めまれます．
 - Twitterに投稿されるstatusにはMastodonにおけるユーザー名が付記されます．
 - 添付された画像ファイルも一緒に転送されます.
-- 転送したstatusを記録しテイルので，一度転送されたstatusが再び転送されることはありません，
+- 転送したstatusを記録しテイルので，一度転送されたstatusが再び転送されることはありません．
+
 
 どのように動くのか
 ==================
@@ -47,9 +49,9 @@ Fig.1 Sample status on Mastodon
 
 Fig.2 Transported status on Twitter
 
-dontwiは実行毎にMastodon APIを用いてはハッシュタグタイムラインを取得します．指定のハッシュタグもしくは``#don_tw``がついたstatusを見つけると，まずこれらをログDBに保存します．
+dontwiは実行毎にMastodon APIを用いてはハッシュタグタイムラインを取得します．指定のハッシュタグもしくは ``#don_tw`` がついたstatusを見つけると，まずこれらをログDBに保存します．
 
-次にログDBにある最も古いstatusを取り出し，TwitterにAPIを用いて投稿します．このstatusには投稿者のMastodonにおけるアドレスとハッシュタグ``#don_tw``が付記されます．
+次にログDBにある最も古いstatusを取り出し，TwitterにAPIを用いて投稿します．このstatusには投稿者のMastodonにおけるアドレスとハッシュタグ ``#don_tw`` が付記されます．
 statusに添付されたメディアファイル [#f1]_ もTwitterの制約に合わせてリサイズしてから一緒に投稿されます．
 
 ツイッターの文字数上限280文字 [#len]_ 以内ならば，status中のテキスト，リンク，ハッシュタグはそのまま維持されます．この文字数上限を越えている場合は，可能な限りリンクとハッシュタグを維持したままテキストだけが切り詰められます．
@@ -119,7 +121,7 @@ pip3を用いてこのレポジトリにあるパッケージを簡単にイン�
 ``trigger``
     検出トリガーとするハッシュタグ
 
-    ハッシュタグの前にはプレフィックス``hashtag:``を付けてください．またハッシュタグの ``#`` は抜いて記述してください．
+    ハッシュタグの前にはプレフィックス ``hashtag:`` を付けてください．またハッシュタグの  ``#`` は抜いて記述してください．
 
 ``outbound``
     着信先の定義が書かれているセクション名
@@ -146,10 +148,10 @@ pip3を用いてこのレポジトリにあるパッケージを簡単にイン�
 ``type``
     着信先のタイプ
 
-    ``twitter``. と書いてださい．なお，将来のバージョンでは他のタイプもサポートれるかもしれません． 
+    ``twitter`` と書いてださい．なお，将来のバージョンでは他のタイプもサポートれるかもしれません．
 
 ``app_key``, ``app_secret``, ``oauth_token``, ``oauth_token_secret``
-    TwitterのAPIキーと関連パラメーターを書いてください．dontwiはTwitterのAPIアクセスに Twython_ ライブラリを用いていますので，これらの取得方法については Twythonのドキュメントを参照してください．  
+    TwitterのAPIキーと関連パラメーターを書いてください．dontwiはTwitterのAPIアクセスに Twython_ ライブラリを用いています．これらのパラメーターの取得方法については Twythonのドキュメントを参照してください．  
 
 .. _Twython: https://github.com/ryanmcgrath/twython
 
@@ -162,6 +164,7 @@ pip3を用いてこのレポジトリにあるパッケージを簡単にイン�
     ログDBファイルへのパスを書いてください．デフォルトはカレントディレクトリの ``dontwi_log.db`` です．FHS_ に準拠した ``/var/db/dontwi_log.db`` とすることをお勧めします． 
 
 .. _FHS: https://wiki.linuxfoundation.org/lsb/fhs
+
 
 3. 設定の確認
 ---------------------------
@@ -209,9 +212,10 @@ pip3を用いてこのレポジトリにあるパッケージを簡単にイン�
     [root@centos7 ~]# dontwi --dry-run
     Test at 2018-02-17T14:04:05.826111+00:00 in:your_mastodon,4705377 out:, tag:どんつい
 
+
 最初にMastodonインスタンスにアクセスしたさいにdontwiはアクセスキーを ``config.ini`` に保存します．
 
-dontwiを``--dry-run`` オプションで起動すると，dontwiはMastodonの `Timelines API`_ を用いてタグタイムラインを取得し，Twitterに送るstatusの下準備を行います．
+dontwiを ``--dry-run``  オプションで起動すると，dontwiはMastodonの `Timelines API`_ を用いてタグタイムラインを取得し，Twitterに送るstatusの下準備を行います．
 
 dontwiはAPIから取得したstatusの最も古い物をTwitterに投稿する準備まで行いますが，そこまでしか処理を行いません．
 この処理は'Test'というラベルと付けてログDBに記録されます．
@@ -232,7 +236,8 @@ dontwiはAPIから取得したstatusの最も古い物をTwitterに投稿する�
     Failed  0
     Test    2
 
- ``Waiting`` ラベルが付けられたエントリー以外の投稿は行われないので ``Test`` エントリーは削除する必用があるでしょう．これは ``--remove-wrong`` オプションを付けて実行することで行えます::
+
+``Waiting`` ラベルが付けられたエントリー以外の投稿は行われないので ``Test`` エントリーは削除する必用があるでしょう．これは ``--remove-wrong`` オプションを付けて実行することで行えます::
 
     [root@centos7 opt]# dontwi --remove-wrong
 
@@ -243,12 +248,14 @@ dontwiはAPIから取得したstatusの最も古い物をTwitterに投稿する�
     [root@centos7 ~]# dontwi
     Succeed at 2018-02-17T14:04:05.826111+00:00 in:your_mastodon,4705377 out:, tag:どんつい
 
+
 4. ``dontwi`` のエントリーをcrontabに加える
 ----------------------------------------------
 
 dontwiを実行するエントリーをcrontabに加えましょう．例としてはこんな感じでしょう::
 
     */2  *  *  *  * root       /usr/bin/dontwi
+
 
 上記のエントリーは2分毎に ``dontwi`` を起動しています． `examples/crontab`_ も参考にしてください．
 
@@ -257,6 +264,7 @@ dontwiを実行するエントリーをcrontabに加えましょう．例とし�
 .. _`examples/crontab`: examples/crontab
 .. _`examples/dontwi.service`: examples/dontwi.service
 .. _`examples/dontwi.timer`: examples/dontwi.timer
+
 
 ライセンス
 ===========
@@ -269,6 +277,7 @@ See `LICENSE`_ for the troposphere full license text.
 .. _`GNU General Public License v3.0`: https://www.gnu.org/licenses/gpl-3.0.en.html
 .. _`LICENSE`: https://github.com/vocalodon/dontwi/blob/master/LICENSE
 .. _`A.しおまねき(@a_shiomaneki@vocalodon.net)`: https://vocalodon.net/@a_shiomaneki
+
 
 謝辞
 ================
