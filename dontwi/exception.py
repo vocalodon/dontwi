@@ -22,3 +22,8 @@ class DontwiMediaError(IOError):
     """Raised when reading or processing error occurred.
     """
     pass
+
+class StatusTextError(AttributeError):
+    """Raised when processing error occurred.
+    """
+    pass
