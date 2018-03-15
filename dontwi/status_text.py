@@ -7,6 +7,8 @@ from functools import reduce
 
 from bs4 import BeautifulSoup
 
+from .exception import StatusTextError
+
 
 class TextType(Enum):
     WORDS = 0
@@ -33,7 +35,7 @@ class StatusText(object):
     def codepoint_weight(codepoint):
         return 1 if ord(codepoint) < 0x1100 else 2  # quick hack
         # U+1100-11FF is Hangul Jamo
-        # block
+                                                          # block
 
     def weighted_length(self, text):
         weighted_length = sum([self.codepoint_weight(codepoint)
@@ -46,6 +48,15 @@ class StatusText(object):
         #unshorted_uri, status = unshorten(url)
         # return sum([len(s) for s in urlparse(unshorted_uri)[0:2]]) + 3
         # +3 means length of "://"
+
+    def length_of_part(self, part):
+        if part.text_type is TextType.URL:
+            return self.count_url_characters(part.text)
+        if part.text_type is TextType.HASHTAG:
+            return self.weighted_length(part.text)
+        if part.text_type is TextType.WORDS:
+            return self.weighted_length(part.text)
+        raise StatusTextError
 
     def slice_content_and_count_len(self, status_string):
         splited_text = self.url_pattern.split(status_string)
@@ -62,21 +73,16 @@ class StatusText(object):
         urls = [s.text for s in marked_parts if s.text_type is TextType.URL]
         hashtags = [
             s.text for s in marked_parts if s.text_type is TextType.HASHTAG]
-        char_count = sum([self.weighted_length(p) for p in words])\
-            + sum([self.weighted_length(p) for p in hashtags]) \
-            + sum([self.count_url_characters(u) for u in urls])
+        char_count = sum([self.length_of_part(p) for p in marked_parts])
         return marked_parts, char_count
 
     def replace_trigger_tag(self, status_string, hashtag):
-        result = status_string.replace(
-            "#{0}".format(hashtag), "#{0}".format(
-                self.federation_hashtag))
+        result = status_string.replace("#{0}".format(hashtag), "#{0}".format(self.federation_hashtag))
         return result
 
     @staticmethod
     def append_user_info(status_string, toot):
-        modified_str = "{0}\n{1}".format(
-            toot.get_user_account(), status_string)
+        modified_str = "{0}\n{1}".format(toot.get_user_account(), status_string)
         return modified_str
 
     @staticmethod
@@ -133,6 +139,37 @@ class StatusText(object):
         status_str = "".join([s.text for s in marked_parts])
         return status_str
 
+    def split_text(self, status_str):
+        """ Split the text of status every 280 characters """
+        limit_len = self.config.getint("message_length", 280)
+        marked_parts, char_count = self.slice_content_and_count_len(status_str)
+        results = []
+        length = 0
+        text = ''
+        for part in marked_parts:
+            while True:
+                part_len = self.length_of_part(part)
+                if length + part_len <= limit_len:
+                    text += part.text
+                    length += part_len
+                    break
+                else:
+                    if part.text_type is TextType.WORDS:
+                        for index,code_point in enumerate(part.text):
+                            code_point_len = self.weighted_length(code_point)
+                            if length + code_point_len <= limit_len:
+                                text += code_point
+                                length += code_point_len
+                            else:
+                                part.text = part.text[index:-1]
+                                break
+                    results.append(text)
+                    text = ''
+                    length = 0
+        if text != '':
+            results.append(text)
+        return results
+
     @staticmethod
     def remove_media_url(status_string, toot):
         return reduce(lambda str, media_dc:
@@ -155,3 +192,20 @@ class StatusText(object):
         result = self.trim_text(result)
 
         return result
+
+    def make_thread_tweets_from_toot(self, toot, hashtag):
+        if not "spoiler_text" in toot.status\
+                or not toot.status["spoiler_text"]:
+            result = self.strip_html_tags(toot)
+        else:
+            result = "{0} #{1}"\
+                     .format(toot.status["spoiler_text"],
+                             self.federation_hashtag)
+        if not self.config.getboolean("attach_media_url", True):
+            result = self.remove_media_url(result, toot)
+        result = self.replace_trigger_tag(result, hashtag)
+        result = self.trunc_redundant_line_break(result)
+        result = self.append_user_info(result, toot)
+        tweet_strings = self.split_text(result)
+        return tweet_strings
+

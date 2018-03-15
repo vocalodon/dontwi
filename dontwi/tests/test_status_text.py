@@ -64,6 +64,19 @@ class TestStatusText(unittest.TestCase):
             status_str2 = "@your_name@your_mastodon.domain\nyour spoiler text #don_tw"
             self.assertEqual(status_str, status_str2)
 
+    def test_split_text(self):
+        conf = make_loaded_dummy_config()
+        limit_len=conf.items['endpoint dontwi'].getint('message_length')
+        status_text = StatusText(conf.outbound)
+        for a_toot_dc in dummy_toot_dicts():
+            status = TootStatus(a_toot_dc)
+            hashtag_str = "#{0}".format(a_toot_dc["hashtag"])
+            status_strs = status_text.make_thread_tweets_from_toot(
+                status, hashtag=a_toot_dc["hashtag"])
+            self.assertFalse(status_strs is None)
+            for status_str in status_strs:
+                ret = status_text.slice_content_and_count_len(status_str)
+                self.assertTrue(ret[1] <= limit_len)
 
 def dummy_toot_dicts():
     dummy_toot_dicts = [{"hashtag": "your_hashtag", "account": {"url": "https://your_mastodon.domain/@your_name"},
