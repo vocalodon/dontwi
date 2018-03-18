@@ -156,9 +156,13 @@ class TwitterConnector(IConnector):
     def get_statuses_by_hashtag(self, hashtag, since, until, limit):
         return super().get_statuses_by_hashtag(hashtag, since, until, limit)
 
-    def update_status(self, status_string, media_ids):
-        return TweetStatus(self.twitter.update_status(
-            status=status_string, media_ids=media_ids))
+    def update_status(self, status_string, media_ids, in_reply_to_status_id=None):
+        if in_reply_to_status_id:
+            return TweetStatus(self.twitter.update_status(
+                status=status_string, media_ids=media_ids, in_reply_to_status_id=in_reply_to_status_id))
+        else:
+            return TweetStatus(self.twitter.update_status(
+                status=status_string, media_ids=media_ids))
 
     def upload_medias(self, media_ios):
         responses = []

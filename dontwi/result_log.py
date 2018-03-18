@@ -125,10 +125,12 @@ class ResultLog(object):
         return summary
 
     @staticmethod
-    def make_result_and_others_summary(status_string, hashtag, result):
+    def make_result_and_others_summary(status_string, hashtag, result, previous_outstatus_id=None):
         summary = {"result": result,
                    "hashtag": hashtag,
                    "status_string": status_string}
+        if previous_outstatus_id:
+            summary['previous_outstatus_id'] = previous_outstatus_id
         summary.update(ResultLog.get_processed_at_dict())
         return summary
 
