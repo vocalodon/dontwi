@@ -64,7 +64,7 @@ class TestStatusText(unittest.TestCase):
             status_str2 = "@your_name@your_mastodon.domain\nyour spoiler text #don_tw"
             self.assertEqual(status_str, status_str2)
 
-    def test_split_text(self):
+    def test_make_thread_tweets_from_toot(self):
         conf = make_loaded_dummy_config()
         limit_len=conf.items['endpoint dontwi'].getint('message_length')
         status_text = StatusText(conf.outbound)
@@ -88,7 +88,7 @@ def dummy_toot_dicts():
                         {"hashtag": "your_hashtag", "account": {"url": "https://your_mastodon.domain/@your_name"},
                          "content": """<p>１２３４５６７８９０１２３４５６７８９０１２３４５６７８９０１２３４５６７８９０１２３４５６７８９０
             あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやぃゆぇよらりるれろわぃぅぇを
-            １２３４５６７８９０１２３４５６７８９０１２３４５６７８９０１２３４５６７８９０１２３４５６７８９０
+            １２３４５６７８９０１２３４５６７８９０#your_hashtag １２３４５６７８９０１２３４５６７８９０
             https://aaa.bbb.com/ddd/eee/fff?ggg=hhh#iii=jjj 間隔 https://kkk.lll.mmm/nnn/ooo/ppp?qqq=rrr#sss=ttt
             <a>#<span>your_hashtag</span></a></p>"""},
                         {"hashtag": "your_hashtag", "account": {"url": "https://your_mastodon.domain/@your_name"},
