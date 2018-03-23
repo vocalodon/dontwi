@@ -80,6 +80,7 @@ class StatusText(object):
         result = status_string.replace("#{0}".format(hashtag), "#{0}".format(self.federation_hashtag))
         return result
 
+
     @staticmethod
     def append_user_info(status_string, toot):
         modified_str = "{0}\n{1}".format(toot.get_user_account(), status_string)
@@ -139,36 +140,45 @@ class StatusText(object):
         status_str = "".join([s.text for s in marked_parts])
         return status_str
 
-    def split_text(self, status_str):
+    def concat_text_of_parts(self, parts):
+        text = ''
+        for a_part in parts:
+            text += a_part.text
+        return text
+
+    def slice_text(self, header, marked_parts):
         """ Split the text of status every 280 characters """
         limit_len = self.config.getint("message_length", 280)
-        marked_parts, char_count = self.slice_content_and_count_len(status_str)
-        results = []
         length = 0
         text = ''
-        for part in marked_parts:
-            while True:
-                part_len = self.length_of_part(part)
-                if length + part_len <= limit_len:
-                    text += part.text
-                    length += part_len
-                    break
-                else:
-                    if part.text_type is TextType.WORDS:
-                        for index,code_point in enumerate(part.text):
-                            code_point_len = self.weighted_length(code_point)
-                            if length + code_point_len <= limit_len:
-                                text += code_point
-                                length += code_point_len
-                            else:
-                                part.text = part.text[index:-1]
-                                break
-                    results.append(text)
-                    text = ''
-                    length = 0
-        if text != '':
-            results.append(text)
-        return results
+        header_tail = SplitedText('#{0}\n'.format(self.federation_hashtag), TextType.HASHTAG)
+        header_all = header + [header_tail]
+        header_len = sum(self.length_of_part(a_part) for a_part in header_all)
+        #marked_parts = header + marked_parts
+        for (index_of_part, part) in enumerate(marked_parts):
+            part_len = self.length_of_part(part)
+            if length + part_len + header_len <= limit_len:
+                if part.text == "#"+self.federation_hashtag:
+                    header_tail = SplitedText('\n', TextType.WORDS)
+                    header_all = header + [header_tail]
+                    header_len = sum(self.length_of_part(a_part) for a_part in header_all)
+                text += part.text
+                length += part_len
+            else:
+                if part.text_type is TextType.WORDS:
+                    for index,code_point in enumerate(part.text):
+                        code_point_len = self.weighted_length(code_point)
+                        if length + code_point_len + header_len <= limit_len:
+                            text += code_point
+                            length += code_point_len
+                        else:
+                            part.text = part.text[index:]
+                            break
+                return [self.concat_text_of_parts(header_all) + text] + self.slice_text(header, marked_parts[index_of_part:])
+        if text:
+            return [self.concat_text_of_parts(header_all) + text]
+        else:
+            return []
 
     @staticmethod
     def remove_media_url(status_string, toot):
@@ -205,7 +215,9 @@ class StatusText(object):
             result = self.remove_media_url(result, toot)
         result = self.replace_trigger_tag(result, hashtag)
         result = self.trunc_redundant_line_break(result)
-        result = self.append_user_info(result, toot)
-        tweet_strings = self.split_text(result)
+        header = [SplitedText("{0} ".format(toot.get_user_account()),
+                                TextType.WORDS)]
+        marked_parts, char_count = self.slice_content_and_count_len(result)
+        #tweet_strings = self.split_text(result)
+        tweet_strings = self.slice_text(header, marked_parts)
         return tweet_strings
-
