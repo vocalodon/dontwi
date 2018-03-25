@@ -106,38 +106,32 @@ class Dontwi(object):
                         if a_result_summary["result"] != "Start":
                             continue
                         status_string = a_result_summary["status_string"]
-                        if isinstance(status_string, list):
-                            if 'previous_outstatus_id' in a_result_summary:
-                                out_status = out_cn.update_status(
-                                    status_string[0], media_ids = media_ids,
-                                    in_reply_to_status_id = a_result_summary['previous_outstatus_id'])
-                            else:
-                                out_status = out_cn.update_status(
-                                    status_string[0], media_ids=media_ids)
-                            media_ids.clear()
-                            out_summary = result_log.make_status_summary(
-                                "outbound", out_status)
-                            if status_string[1:]:
-                                new_result_summary = copy.deepcopy(a_result_summary)
-                                new_result_summary["status_string"] = status_string[0]
-                                new_result_summary.update(out_summary)
-                                new_result_summary["result"] = "Succeed"
-                                result_summaries.append((new_result_summary, None))
-
-                                a_result_summary["status_string"] = status_string[1:]
-                                a_result_summary['previous_outstatus_id'] = out_status.get_status_id()
-                                a_result_summary["result"] = "Start"
-                            else:
-                                a_result_summary["status_string"]=status_string[0]
-                                a_result_summary.update(out_summary)
-                                a_result_summary["result"] = "Succeed"
+                        if not isinstance(status_string, list):
+                            status_string = [status_string]
+                        if 'previous_outstatus_id' in a_result_summary:
+                            out_status = out_cn.update_status(
+                                status_string[0], media_ids = media_ids,
+                                in_reply_to_status_id = a_result_summary['previous_outstatus_id'])
                         else:
                             out_status = out_cn.update_status(
-                                status_string=status_string, media_ids=media_ids)
-                            media_ids.clear()
+                                status_string[0], media_ids=media_ids)
+                        media_ids.clear()
+                        out_summary = result_log.make_status_summary(
+                            "outbound", out_status)
+                        if status_string[1:]:
+                            new_result_summary = copy.deepcopy(a_result_summary)
+                            new_result_summary["status_string"] = status_string[0]
+                            new_result_summary.update(out_summary)
+                            new_result_summary["result"] = "Succeed"
+                            result_summaries.append((new_result_summary, None))
+
+                            a_result_summary["status_string"] = status_string[1:]
+                            a_result_summary['previous_outstatus_id'] = out_status.get_status_id()
+                            a_result_summary["result"] = "Start"
+                        else:
+                            a_result_summary["status_string"]=status_string[0]
                             a_result_summary.update(out_summary)
                             a_result_summary["result"] = "Succeed"
-
             else:
                 result_summary["result"] = "Test"
         except TwythonRateLimitError as twython_ex:

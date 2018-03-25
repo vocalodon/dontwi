@@ -50,8 +50,16 @@ class TestDontwi(unittest.TestCase):
         dontwi.process_one_waiting_status(result_log=self.result_log, 
                                           result_summary=target, media_ios=None, 
                                           out_cn=out_cn,is_dry_run=False)
-        result_strs = [result["result"] for result in result_summaries]
+        processed_summaries = self.result_log.get_result_summaries_by_results(["Waiting"])
+        result_strs = [result["result"] for result in processed_summaries]
         self.assertNotEquals(result_strs, "Failed")
+        target["status_string"] = [target["status_string"], target["status_string"]]
+        dontwi.process_one_waiting_status(result_log=self.result_log, 
+                                          result_summary=target, media_ios=None, 
+                                          out_cn=out_cn,is_dry_run=False)
+        result_strs = [result["result"] for result in result_summaries]
+        processed_summaries = self.result_log.get_result_summaries_by_results(["Waiting"])
+        self.assertEqual(len(processed_summaries), 1)
 
     @unittest.skipUnless(YOUR_MASTODON_FQDN,
                          'YOUR_MASTODON_FQDN isn\'t defined')
