@@ -116,6 +116,7 @@ class Dontwi(object):
                             else:
                                 out_status = out_cn.update_status(
                                     status_string[0], media_ids=media_ids)
+                            media_ids.clear()
                             out_summary = result_log.make_status_summary(
                                 "outbound", out_status)
                             if status_string[1:]:
@@ -135,8 +136,10 @@ class Dontwi(object):
                         else:
                             out_status = out_cn.update_status(
                                 status_string=status_string, media_ids=media_ids)
+                            media_ids.clear()
                             a_result_summary.update(out_summary)
                             a_result_summary["result"] = "Succeed"
+
             else:
                 result_summary["result"] = "Test"
         except TwythonError as twython_ex:
