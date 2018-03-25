@@ -8,7 +8,7 @@ import re
 import copy
 from logging import StreamHandler, getLogger
 
-from twython import TwythonError
+from twython import TwythonError, TwythonRateLimitError
 
 from .config import Config
 from .connector import MastodonConnector, TwitterConnector
@@ -92,8 +92,6 @@ class Dontwi(object):
         [result_summary_eid] = result_log.update_result_summary_in_db(
             result_summary=result_summary, eids=[result_summary.eid])
         out_status = None
-
-
         result_summaries = [(result_summary, result_summary_eid)]
         
         try:
@@ -142,10 +140,16 @@ class Dontwi(object):
 
             else:
                 result_summary["result"] = "Test"
+        except TwythonRateLimitError as twython_ex:
+            for a_result_summary, a_eid in result_summaries:
+                if a_result_summary["result"] == "Start":
+                    a_result_summary["result"] = "Waiting"
+                    a_result_summary["error"] = "{0}".format(str(twython_ex))
         except TwythonError as twython_ex:
-            result_summary["result"] = "Failed"
-            result_summary["error"] = "{0}".format(str(twython_ex))
-            result_summaries.append((result_summary, result_summary_eid))
+            for a_result_summary, a_eid in result_summaries:
+                if a_result_summary["result"] == "Start":
+                    a_result_summary["result"] = "Failed"
+                    a_result_summary["error"] = "{0}".format(str(twython_ex))
         finally:
             pass
 
