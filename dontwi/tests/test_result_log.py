@@ -152,7 +152,6 @@ def make_dummy_conf_and_result_log(your_mastodon_fqdn=None):
                                                   status=tt_status))
     summary.update(result_log.make_status_summary("outbound",
                                                   status=tw_status))
-    remove_file(config.items["result log"]["db_file"])
     result_log.save_result_summaries(result_summaries=[summary])
     return config, hashtag, tt_status, tw_status,\
         status_pr, result_log, status_str,\
