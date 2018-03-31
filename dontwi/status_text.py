@@ -2,6 +2,7 @@
 """Status text processor
 """
 import re
+import regex
 from enum import Enum
 from functools import reduce
 
@@ -27,6 +28,7 @@ class StatusText(object):
 
     federation_hashtag = "don_tw"
     url_pattern = re.compile(r"(https?://[\w/:%#@\$&\?\(\)~\.=\+\-]+|#\S+)")
+    latin_pattern = regex.compile(r"([\p{N}\p{Latin}\p{P}]{1,140}|.|\s)")
 
     def __init__(self, config):
         self.config = config
@@ -63,12 +65,17 @@ class StatusText(object):
         for index in [0, -1]:
             if splited_text[index] == "":
                 del splited_text[index]
-        marked_parts = [
-            SplitedText(text=s, text_type=(lambda q:
-                                           TextType.WORDS if not self.url_pattern.match(q)
-                                           else TextType.URL if not q.startswith("#")
-                                           else TextType.HASHTAG)(s))
-            for s in splited_text]
+        marked_parts = []
+        for text in splited_text:
+            if text.startswith("#"):
+                text_type = TextType.HASHTAG
+            elif self.url_pattern.match(text):
+                text_type = TextType.URL
+            else:
+                words = self.latin_pattern.findall(text)
+                marked_parts.extend( [SplitedText(text=w, text_type=TextType.WORDS) for w in words])
+                continue
+            marked_parts.append( SplitedText(text=text, text_type=text_type))
         words = [s.text for s in marked_parts if s.text_type is TextType.WORDS]
         urls = [s.text for s in marked_parts if s.text_type is TextType.URL]
         hashtags = [
@@ -165,15 +172,6 @@ class StatusText(object):
                 text += part.text
                 length += part_len
             else:
-                if part.text_type is TextType.WORDS:
-                    for index,code_point in enumerate(part.text):
-                        code_point_len = self.weighted_length(code_point)
-                        if length + code_point_len + header_len <= limit_len:
-                            text += code_point
-                            length += code_point_len
-                        else:
-                            part.text = part.text[index:]
-                            break
                 return [self.concat_text_of_parts(header_all) + text] + self.slice_text(header, marked_parts[index_of_part:])
         if text:
             return [self.concat_text_of_parts(header_all) + text]
