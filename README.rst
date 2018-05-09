@@ -27,7 +27,6 @@ Features
 - Username at Mastodon is attached to Twitter status. 
 - The attached image is also transported with status text.
 - Statuses recorded as sent has never been sent again.
-- 
 
 How it works
 ============
