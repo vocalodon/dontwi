@@ -172,7 +172,10 @@ class StatusText(object):
                 text += part.text
                 length += part_len
             else:
-                return [self.concat_text_of_parts(header_all) + text] + self.slice_text(header, marked_parts[index_of_part:])
+                if index_of_part == 0:
+                    raise StatusTextError("message_length isn\'t enough for current header and words of the message.")
+                else:
+                    return [self.concat_text_of_parts(header_all) + text] + self.slice_text(header, marked_parts[index_of_part:])
         if text:
             return [self.concat_text_of_parts(header_all) + text]
         else:

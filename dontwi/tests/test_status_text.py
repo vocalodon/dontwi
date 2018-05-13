@@ -3,9 +3,12 @@
 import re
 import unittest
 from json import dumps, loads
+import string
+import random
 
 from ..connector import TootStatus
 from ..status_text import StatusText
+from ..exception import StatusTextError
 from .test_config import make_loaded_dummy_config, remove_dummy_files
 
 
@@ -78,6 +81,31 @@ class TestStatusText(unittest.TestCase):
                 ret = status_text.slice_content_and_count_len(status_str)
                 self.assertTrue(ret[1] <= limit_len)
 
+    def test_make_thread_tweets_from_toot_by_long_words(self):
+        word_len = 20
+        conf = make_loaded_dummy_config()
+        status_text = StatusText(conf.outbound)
+        for a_toot_dc in dummy_toot_dicts2(word_len):
+            account_match = re.match( r'http.*://(?P<instance>.*)/@(?P<name>.*)', a_toot_dc["account"]["url"])
+            account_id = "@{0}@{1}".format(account_match.group('name'), account_match.group('instance'))
+            #hashtag_str = "#{0}".format(a_toot_dc["hashtag"])
+            hashtag_str =  "#{0}".format(StatusText.federation_hashtag)
+            limit_len = len(account_id)+len(hashtag_str)+2+word_len
+            conf.items['endpoint dontwi']["message_length"] = str(limit_len-1)    
+            status = TootStatus(a_toot_dc)
+            with self.assertRaises(StatusTextError):
+                status_strs = status_text.make_thread_tweets_from_toot(
+                    status, hashtag=a_toot_dc["hashtag"])
+                self.fail()
+            conf.items['endpoint dontwi']["message_length"] = str(limit_len)
+            status_strs = status_text.make_thread_tweets_from_toot(
+                    status, hashtag=a_toot_dc["hashtag"])
+            self.assertFalse(status_strs is None)
+            for status_str in status_strs:
+                ret = status_text.slice_content_and_count_len(status_str)
+                self.assertTrue(ret[1] <= limit_len)
+
+
 def dummy_toot_dicts():
     dummy_toot_dicts = [{"hashtag": "your_hashtag", "account": {"url": "https://your_mastodon.domain/@your_name"},
                          "content": """<p>１２３４５６７８９０１２３４５６７８９０１２３４５６７８９０１２３４５６７８９０１２３４５６７８９０
@@ -86,17 +114,30 @@ def dummy_toot_dicts():
             https://aaa.bbb.com/ddd/eee/fff?ggg=hhh#iii=jjj 間隔 https://kkk.lll.mmm/nnn/ooo/ppp?qqq=rrr#sss=ttt
             <a>#<span>your_hashtag</span></a></p>"""},
                         {"hashtag": "your_hashtag", "account": {"url": "https://your_mastodon.domain/@your_name"},
-                         "content": """<p>１２３４５６７８９０１２３４５６７８９０１２３４５６７８９０１２３４５６７８９０１２３４５６７８９０
-            あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやぃゆぇよらりるれろわぃぅぇを
-            １２３４５６７８９０１２３４５６７８９０#your_hashtag １２３４５６７８９０１２３４５６７８９０
-            https://aaa.bbb.com/ddd/eee/fff?ggg=hhh#iii=jjj 間隔 https://kkk.lll.mmm/nnn/ooo/ppp?qqq=rrr#sss=ttt
-            <a>#<span>your_hashtag</span></a></p>"""},
-                        {"hashtag": "your_hashtag", "account": {"url": "https://your_mastodon.domain/@your_name"},
                          "content": """<p>content text</p><p><a href="https://your_mastodon.domain/tags/%E3%81%A9%E3%82%93%E3%81%A4%E3%81%84" class="mention hashtag" rel="tag">#<span>your_hashtag</span></a></p>"""},
                         {"hashtag": "your_hashtag", "account": {"url": "https://your_mastodon.domain/@your_name"},
                          "spoiler_text": "your spoiler text",
                          "content": """<p>content text</p><p><a href="https://your_mastodon.domain/tags/%E3%81%A9%E3%82%93%E3%81%A4%E3%81%84" class="mention hashtag" rel="tag">#<span>your_hashtag</span></a></p>"""}]
     return dummy_toot_dicts
+
+
+def dummy_toot_dicts2(test_len=15):
+    hiragana_list = [chr(i) for i in range(12353, 12436)]
+    zenkaku_digit_list = [chr(i) for i in range(65296, 65296+10)]
+
+    content = "".join([string.ascii_letters[index]  for index in range(test_len)])
+    content += "".join([hiragana_list[index] for index in range(test_len // 2)])
+    content += " "
+    content += "".join([zenkaku_digit_list[index % 10] for index in range(test_len // 2)])
+    content += "".join([hiragana_list[index] for index in range(test_len // 2)])
+    content += "\n"
+    content += "".join([string.ascii_letters[index]  for index in range(test_len)])
+    content += "".join([hiragana_list[index] for index in range(test_len // 2)])
+
+    dummy_toot_dicts2 = [{"hashtag": "your_hashtag", "account": {"url": "https://your_mastodon.domain/@your_name"},
+                         "content": "<p>{0}</p>".format(content)}]
+    return dummy_toot_dicts2
+
 
 
 def dummy_toot_with_media(your_mastodon_fqdn=''):
