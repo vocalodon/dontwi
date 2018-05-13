@@ -14,7 +14,7 @@
     <RootNamespace>dontwi</RootNamespace>
     <IsWindowsApplication>False</IsWindowsApplication>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
-    <CommandLineArguments>-m dontwi --dry-run</CommandLineArguments>
+    <CommandLineArguments>-m dontwi</CommandLineArguments>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
     <InterpreterId>Global|PythonCore|3.4</InterpreterId>
     <Environment>

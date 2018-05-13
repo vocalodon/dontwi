@@ -26,4 +26,5 @@ class DontwiMediaError(IOError):
 class StatusTextError(AttributeError):
     """Raised when processing error occurred.
     """
-    pass
+    def __init__(self, message):
+        self.message = message
