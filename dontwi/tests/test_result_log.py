@@ -134,8 +134,8 @@ def make_result_summary(result_log, inbound_status,
 
 def get_dummy_materials():
     h_tag = "your_hashtag"
-    tt_status = dummy_toot()
-    tw_status = dummy_tweet()
+    tt_status = TootStatus(dummy_toot())
+    tw_status = TweetStatus(dummy_tweet())
     return h_tag, tt_status, tw_status
 
 
@@ -164,7 +164,7 @@ def remove_file(filename):
 
 
 def dummy_toot():
-    return TootStatus(json.loads(r'''
+    return json.loads(r'''
 {
     "id": "1345211",
     "created_at": "2017-07-06T18:37:16.703Z",
@@ -207,11 +207,11 @@ def dummy_toot():
     "favourites_count": 0,
     "reblog": null
 }
-        '''))
+        ''')
 
 
 def dummy_tweet():
-    return TweetStatus(json.loads(r'''
+    return json.loads(r'''
 {
     "created_at": "Thu Jul 06 18:54:11 +0000 2017",
     "id": 883036371132178432,
@@ -293,4 +293,4 @@ def dummy_tweet():
     "retweeted": false,
     "lang": "ja"
 }
-        '''))
+        ''')

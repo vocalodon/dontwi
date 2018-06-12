@@ -1,15 +1,17 @@
 #!  /usr/bin/python3
 # -*- coding: utf-8 -*-
 import unittest
+from unittest.mock import patch
+
 from sys import argv
-from twython import TwythonRateLimitError
+from twython import TwythonRateLimitError, Twython
 
 from ..__main__ import get_secret_and_save
 from ..config import Config
 from ..connector import MastodonConnector, TwitterConnector, IConnector
 from ..dontwi import Dontwi
 from .test_config import make_loaded_dummy_config, remove_dummy_files
-from .test_result_log import make_dummy_conf_and_result_log
+from .test_result_log import make_dummy_conf_and_result_log, dummy_tweet
 from .test_connector import CONFIG_FOR_TESTS, CONFIG_FOR_TESTS_FILENAME, YOUR_MASTODON_FQDN
 
 
@@ -32,34 +34,29 @@ class TestDontwi(unittest.TestCase):
         is_ng = dontwi.run(is_dry_run=True)
         self.assertFalse(is_ng)
 
-    def test_process_one_waiting_status(self):
-        dontwi = Dontwi(self.config)
+    @patch.object(Twython,'update_status')
+    def test_process_one_waiting_status(self, mocked_method):
+        mocked_method.return_value = '{"errors":[{"message":"Rate limit exceeded","code":429}]}'
+        mocked_method.side_effect = TwythonRateLimitError("test", error_code=429, retry_after=5)
 
-        class DummyConnector():
-            def connect(self, do_login=False):
-                pass
-            def update_status(self, status_string, media_ids):
-                raise TwythonRateLimitError(msg="dummy", error_code=88)
-            def upload_medias(self, media_ios):
-                pass
-            def get_media_ios(self, media_dicts):
-                pass
-        out_cn = DummyConnector()
+        dontwi = Dontwi(self.config)
+        out_cn = TwitterConnector(self.config.outbound)
         result_summaries = self.result_log.get_result_summaries_by_results(["Succeed"])
         target = result_summaries[0]
         dontwi.process_one_waiting_status(result_log=self.result_log, 
-                                          result_summary=target, media_ios=None, 
-                                          out_cn=out_cn,is_dry_run=False)
+                                            result_summary=target, media_ios=[], 
+                                            out_cn=out_cn,is_dry_run=False)
         processed_summaries = self.result_log.get_result_summaries_by_results(["Waiting"])
         result_strs = [result["result"] for result in processed_summaries]
         self.assertNotEquals(result_strs, "Failed")
         target["status_string"] = [target["status_string"], target["status_string"]]
         dontwi.process_one_waiting_status(result_log=self.result_log, 
-                                          result_summary=target, media_ios=None, 
+                                          result_summary=target, media_ios=[], 
                                           out_cn=out_cn,is_dry_run=False)
         result_strs = [result["result"] for result in result_summaries]
         processed_summaries = self.result_log.get_result_summaries_by_results(["Waiting"])
         self.assertEqual(len(processed_summaries), 1)
+
 
     @unittest.skipUnless(YOUR_MASTODON_FQDN,
                          'YOUR_MASTODON_FQDN isn\'t defined')
