@@ -98,7 +98,7 @@ class Dontwi(object):
             out_cn.connect()
             if not is_dry_run:
                 media_ids = out_cn.upload_medias(media_ios)\
-                    if self.config.outbound.getboolean("attach_media", "yes")\
+                    if self.config.outbound.getboolean("attach_media", fallback="yes")\
                     else []
 
                 while any( element[0]["result"] == "Start" for element in result_summaries):
