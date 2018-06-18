@@ -4,6 +4,7 @@ import json
 import os.path
 import unittest
 from datetime import datetime
+from copy import deepcopy
 
 from dateutil.parser import parse as timestamp_parse
 from tinydb import database
@@ -25,15 +26,23 @@ class TestStatusLog(unittest.TestCase):
     def test_make_result_summary(self):
         config, h_tag, tt_status, tw_status,\
             status_msg_proc, result_log, status_str,\
-            summary = make_dummy_conf_and_result_log()
-        self.assertEqual(summary["inbound_status_id"],
-                         tt_status.get_status_id())
-        self.assertEqual(summary["outbound_status_id"],
-                         tw_status.get_status_id())
+            summaries = make_dummy_conf_and_result_log()
+        inbound_ids = [summary["inbound_status_id"]
+                                       for summary in summaries
+                                       if summary["result"] == "Succeed"]
+        self.assertEqual(inbound_ids,
+                         [tt_status.get_status_id()] * len(inbound_ids))
+        outbound_ids = [summary["outbound_status_id"]
+                                       for summary in summaries
+                                       if summary["result"] == "Succeed"]
+        self.assertEqual(outbound_ids,
+                         [tw_status.get_status_id()] * len(outbound_ids))
         now_t_stamp = datetime.now().timestamp()
-        processed_t_stamp = timestamp_parse(
-            summary["processed_at"]).timestamp()
-        self.assertAlmostEqual(now_t_stamp, processed_t_stamp, delta=1)
+        processed_times = [timestamp_parse(summary["processed_at"]).timestamp()
+                                       for summary in summaries
+                                       if summary["result"] == "Succeed"]
+        for a_time in processed_times:
+            self.assertAlmostEqual(now_t_stamp, a_time, delta=1)
 
     def test_get_summaries_by_result(self):
         config, hashtag, tt_status, tw_status,\
@@ -48,35 +57,32 @@ class TestStatusLog(unittest.TestCase):
         summaries = []
         for a_id in dummy_id_to_result:
             tt_status.status["id"] = a_id
-            tw_str = status_pr.make_tweet_string_from_toot(
-                tt_status, hashtag=hashtag)
+            tw_str = status_pr.make_tweet_string_from_toot(tt_status, hashtag=hashtag)
             summary = make_result_summary(result_log=result_log, result=dummy_id_to_result[a_id],
                                           inbound_status=tt_status, outbound_status=tw_status,
                                           hashtag=hashtag, status_string=tw_str)
             summaries += [summary]
         result_log.save_result_summaries(summaries)
         for a_id in dummy_id_to_result:
-            summaries2 = result_log.get_result_summaries_by_results(
-                [dummy_id_to_result[a_id]])
+            summaries2 = result_log.get_result_summaries_by_results([dummy_id_to_result[a_id]])
             self.assertEqual(len(summaries2), 1)
             self.assertEqual(summaries2[0]["inbound_status_id"], a_id)
 
     def test_get_process_summary(self):
         config, h_tag, tt_status, tw_status,\
             status_pr, result_log, status_str,\
-            summary = make_dummy_conf_and_result_log()
+            summaries = make_dummy_conf_and_result_log()
         remove_file(config.items["result log"]["db_file"])
-        result_log.save_result_summaries(result_summaries=[summary])
-        summaries = result_log.get_result_summaries_by_status(status=tt_status)
+        result_log.save_result_summaries(result_summaries=summaries)
+        summaries_by_tt_status = result_log.get_result_summaries_by_status(status=tt_status)
         self.assertEqual(tt_status.get_status_id(),
                          summaries[0]["inbound_status_id"])
 
     def test_has_result_of_message(self):
         config, hashtag, tt_status, tw_status,\
             status_pr, result_log, status_str,\
-            summary = make_dummy_conf_and_result_log()
-        has_result = result_log.has_result_of_status(
-            status=tt_status, results=["Succeed", "Start"])
+            summaries = make_dummy_conf_and_result_log()
+        has_result = result_log.has_result_of_status(status=tt_status, results=["Succeed", "Waiting"])
         self.assertTrue(has_result)
 
     def test_status(self):
@@ -101,8 +107,7 @@ class TestStatusLog(unittest.TestCase):
             status_pr, result_log, status_str,\
             summary = make_dummy_conf_and_result_log()
         tt_status.status["id"] = 12
-        tw_str = status_pr.make_tweet_string_from_toot(
-            tt_status, hashtag=hashtag)
+        tw_str = status_pr.make_tweet_string_from_toot(tt_status, hashtag=hashtag)
         summary = make_result_summary(result_log=result_log, result="Waiting",
                                       inbound_status=tt_status, outbound_status=tw_status,
                                       hashtag=hashtag, status_string=tw_str)
@@ -123,8 +128,7 @@ class TestStatusLog(unittest.TestCase):
 def make_result_summary(result_log, inbound_status,
                         outbound_status, status_string, hashtag,
                         result):
-    summary = result_log.make_result_and_others_summary(
-        status_string=status_string, hashtag=hashtag, result=result)
+    summary = result_log.make_result_and_others_summary(status_string=status_string, hashtag=hashtag, result=result)
     summary.update(result_log.make_status_summary("inbound",
                                                   status=inbound_status))
     summary.update(result_log.make_status_summary("outbound",
@@ -143,19 +147,25 @@ def make_dummy_conf_and_result_log(your_mastodon_fqdn=None):
     config = make_loaded_dummy_config(your_mastodon_fqdn)
     hashtag, tt_status, tw_status = get_dummy_materials()
     status_pr = StatusText(config.outbound)
-    status_str = status_pr.make_tweet_string_from_toot(
-        toot=tt_status, hashtag=hashtag)
+    status_str = status_pr.make_tweet_string_from_toot(toot=tt_status, hashtag=hashtag)
     result_log = ResultLog(config.items)
-    summary = result_log.make_result_and_others_summary(
-        status_string=status_str, hashtag=hashtag, result="Succeed")
-    summary.update(result_log.make_status_summary("inbound",
+    succeed_summary = result_log.make_result_and_others_summary(status_string=status_str, hashtag=hashtag, result="Succeed")
+    succeed_summary.update(result_log.make_status_summary("inbound",
                                                   status=tt_status))
-    summary.update(result_log.make_status_summary("outbound",
+    succeed_summary.update(result_log.make_status_summary("outbound",
                                                   status=tw_status))
-    result_log.save_result_summaries(result_summaries=[summary])
+    status_id = int(tt_status.get_status_id())
+    status_id += 10
+    tt_status2 = deepcopy(tt_status)
+    tt_status2.status["id"] = str(status_id)
+    waiting_summary = result_log.make_result_and_others_summary(status_string=status_str, hashtag=hashtag, result="Waiting")
+    waiting_summary.update(result_log.make_status_summary("inbound",
+                                                  status=tt_status2))
+    summaries = [succeed_summary, waiting_summary]
+    result_log.save_result_summaries(result_summaries=summaries)
     return config, hashtag, tt_status, tw_status,\
         status_pr, result_log, status_str,\
-        summary
+        summaries
 
 
 def remove_file(filename):
