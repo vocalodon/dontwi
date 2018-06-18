@@ -6,11 +6,16 @@ About
 ======
 
 dontwi_ is a status transporter script from Mastodon instances to Twitter. 
-It transports statuses triggered by your preferred hashtag in Mastodon public timeline to a twitter account with `#don_tw` hashtag. 
+It transports statuses triggered by your preferred hashtag in Mastodon public timeline to a twitter account with ``#don_tw`` hashtag. 
 Its aim is communication with Mastodon users and the Twitter's follers. This idea was described on `Mastodon 2 Advent Calendar 2017`_ by `TOMOKI++(@tomoki@vocalodon.net)`_.
+
+`日本語`_ *で読む*
+
 
 .. _dontwi: https://github.com/vocalodon/dontwi
 .. _`Mastodon 2 Advent Calendar 2017`: http://info.vocalodon.net/notes/dontwi.html
+.. _`English` : README.rst
+.. _`日本語` : README.ja.rst
 
 Features
 --------
@@ -58,6 +63,7 @@ You can also use ``setup.py`` to install from your local repository via::
 
     python3 setup.py install
 
+
 Setting up
 ==========
 
@@ -90,6 +96,7 @@ You should place the configuration file ``dontwi.ini`` to ``/etc``. Search paths
 
 ..  _`examples/dontwi.ini`: examples/dontwi.ini
 
+
 2. Modify configuration for your instance
 -----------------------------------------
 
@@ -110,7 +117,7 @@ It is better not to write comments because of dontwi deletes these when saving M
     Set the hashtag with prefix ``hashtag:`` and without ``#`` mark.
 
 ``outbound``
-    Section name of the inbound endpoint parameters
+    Section name of the outbound endpoint parameters
 
     See above note for ``inbound`` setting.
 
@@ -150,6 +157,7 @@ It is better not to write comments because of dontwi deletes these when saving M
     Set log DB file path. Default is ``dontwi_log.db`` on current directory. We recommend using ``/var/db/dontwi_log.db`` according to FHS_.
 
 .. _FHS: https://wiki.linuxfoundation.org/lsb/fhs
+
 
 3. Check your configuration
 ---------------------------
@@ -197,6 +205,7 @@ For confirmation of ``dontwi.ini``,  run ``dontwi`` with ``--dry-run`` via::
     [root@centos7 ~]# dontwi --dry-run
     Test at 2018-02-17T14:04:05.826111+00:00 in:your_mastodon,4705377 out:, tag:どんつい
 
+
 When first accessing to your Mastodon instance, dontwi saves the access keys in ``config.ini``. 
 
 When you execute dontwi with ``--dry-run``,  dontwi gets a tag timeline of your Mastodon instance via `Timelines API`_ and prepares statuses to Twitter. dontwi prepares to post the oldest status in API response to Twitter, however, does not until post. This process is logged with 'Test' label. Other status texts are queued for next run with 'Waiting' label. While remaining in the queue, post one status from the queue on each run.
@@ -215,9 +224,11 @@ You can see the number of these labels in the log DB by ``--summary`` option via
     Failed  0
     Test    2
 
+
 Because labeled entries not specified with ``Waiting`` will not be processed, so delete the ``Test`` entries using ``--remove-wrong`` option before starting operation.::
 
     [root@centos7 opt]# dontwi --remove-wrong
+
 
 In this process, other failure-related entries will be deleted.
 
@@ -226,6 +237,7 @@ After the above preparation, you can test run. Simply execute ``dontwi``::
     [root@centos7 ~]# dontwi
     Succeed at 2018-02-17T14:04:05.826111+00:00 in:your_mastodon,4705377 out:, tag:どんつい
 
+
 4. Add ``dontwi`` entry to crontab
 ------------------------------------
 
@@ -233,11 +245,13 @@ Let's add dontwi entry to crontab. Examaple is below::
 
     */2  *  *  *  * root       /usr/bin/dontwi
 
+
 Above entry means run dontwi each 2 minute. Also, refer `examples/crontab`_. If you prefer ``systemd``, you can use `examples/dontwi.service`_ and `examples/dontwi.timer`_.
 
 .. _`examples/crontab`: examples/crontab
 .. _`examples/dontwi.service`: examples/dontwi.service
 .. _`examples/dontwi.timer`: examples/dontwi.timer
+
 
 License
 =======
@@ -250,6 +264,7 @@ See `LICENSE`_ for the troposphere full license text.
 .. _`GNU General Public License v3.0`: https://www.gnu.org/licenses/gpl-3.0.en.html
 .. _`LICENSE`: https://github.com/vocalodon/dontwi/blob/master/LICENSE
 .. _`A.しおまねき(@a_shiomaneki@vocalodon.net)`: https://vocalodon.net/@a_shiomaneki
+
 
 Acknowledgements
 ================
