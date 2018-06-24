@@ -69,12 +69,13 @@ class TestStatusText(unittest.TestCase):
 
     def test_make_thread_tweets_from_toot(self):
         conf = make_loaded_dummy_config()
-        limit_len=conf.items['endpoint dontwi'].getint('message_length')
+        limit_len=conf.items.getint('endpoint dontwi', 'message_length')
+        conf.items.set('endpoint dontwi', 'post_mode', 'thread')
         status_text = StatusText(conf.outbound)
         for a_toot_dc in dummy_toot_dicts():
             status = TootStatus(a_toot_dc)
             hashtag_str = "#{0}".format(a_toot_dc["hashtag"])
-            status_strs = status_text.make_thread_tweets_from_toot(
+            status_strs = status_text.make_tweet_string_from_toot(
                 status, hashtag=a_toot_dc["hashtag"])
             self.assertFalse(status_strs is None)
             for status_str in status_strs:
@@ -84,6 +85,7 @@ class TestStatusText(unittest.TestCase):
     def test_make_thread_tweets_from_toot_by_long_words(self):
         word_len = 20
         conf = make_loaded_dummy_config()
+        conf.items.set('endpoint dontwi', 'post_mode', 'thread')
         status_text = StatusText(conf.outbound)
         for a_toot_dc in dummy_toot_dicts2(word_len):
             account_match = re.match( r'http.*://(?P<instance>.*)/@(?P<name>.*)', a_toot_dc["account"]["url"])
@@ -94,11 +96,11 @@ class TestStatusText(unittest.TestCase):
             conf.items['endpoint dontwi']["message_length"] = str(limit_len-1)    
             status = TootStatus(a_toot_dc)
             with self.assertRaises(StatusTextError):
-                status_strs = status_text.make_thread_tweets_from_toot(
+                status_strs = status_text.make_tweet_string_from_toot(
                     status, hashtag=a_toot_dc["hashtag"])
                 self.fail()
             conf.items['endpoint dontwi']["message_length"] = str(limit_len)
-            status_strs = status_text.make_thread_tweets_from_toot(
+            status_strs = status_text.make_tweet_string_from_toot(
                     status, hashtag=a_toot_dc["hashtag"])
             self.assertFalse(status_strs is None)
             for status_str in status_strs:
