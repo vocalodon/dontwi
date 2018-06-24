@@ -62,10 +62,7 @@ class Dontwi(object):
             # fail-safe.
             if not result_log.has_result_of_status(
                     status=a_status, results=["Succeed", "Start", "Failed", "Test"]):
-                #st_str = status_pr.make_tweet_string_from_toot(
-                #    a_status, hashtag=trigger_str)
-
-                st_str=status_pr.make_thread_tweets_from_toot(
+                st_str = status_pr.make_tweet_string_from_toot(
                     a_status, hashtag=trigger_str)
 
                 rs_str = "Waiting"

@@ -32,6 +32,14 @@ class StatusText(object):
 
     def __init__(self, config):
         self.config = config
+        if "post_mode" not in self.config:
+            config["post_mode"] = "single"
+        if self.config["post_mode"] == "single":
+            self.make_tweet_string_from_toot = self.__make_tweet_from_toot
+        elif self.config["post_mode"] == "thread":
+            self.make_tweet_string_from_toot = self.__make_thread_tweet_strings_from_toot
+        else:
+            raise StatusTextError('post_mode parameter is incorrect')
 
     @staticmethod
     def codepoint_weight(codepoint):
@@ -187,7 +195,7 @@ class StatusText(object):
                       str.replace(media_dc["text_url"], ""), toot.get_medias(),
                       status_string)
 
-    def make_tweet_string_from_toot(self, toot, hashtag):
+    def __make_tweet_from_toot(self, toot, hashtag):
         if not "spoiler_text" in toot.status\
                 or not toot.status["spoiler_text"]:
             result = self.strip_html_tags(toot)
@@ -204,7 +212,7 @@ class StatusText(object):
 
         return result
 
-    def make_thread_tweets_from_toot(self, toot, hashtag):
+    def __make_thread_tweet_strings_from_toot(self, toot, hashtag):
         if not "spoiler_text" in toot.status\
                 or not toot.status["spoiler_text"]:
             result = self.strip_html_tags(toot)
