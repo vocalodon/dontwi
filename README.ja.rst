@@ -98,6 +98,7 @@ pip3を用いてこのレポジトリにあるパッケージを簡単にイン�
     oauth_token = 
     oauth_token_secret = 
     message_length = 280
+    post_mode = single
 
     [result log]
     db_file = /var/db/dontwi_log.db
