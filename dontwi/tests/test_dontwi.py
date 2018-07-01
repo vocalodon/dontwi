@@ -9,7 +9,7 @@ from twython import TwythonRateLimitError, Twython
 from ..__main__ import get_secret_and_save
 from ..config import Config
 from ..connector import MastodonConnector, TwitterConnector, IConnector
-from ..dontwi import Dontwi
+from .._dontwi import Dontwi
 from .test_config import make_loaded_dummy_config, remove_dummy_files
 from .test_result_log import make_dummy_conf_and_result_log, dummy_tweet
 from .test_connector import CONFIG_FOR_TESTS, CONFIG_FOR_TESTS_FILENAME, YOUR_MASTODON_FQDN

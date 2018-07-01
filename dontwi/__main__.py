@@ -7,7 +7,7 @@ from argparse import SUPPRESS, ArgumentParser
 from pprint import pprint
 
 from dontwi.config import Config
-from dontwi.dontwi import Dontwi
+from dontwi._dontwi import Dontwi
 from dontwi.result_log import ResultLog
 from dontwi.version import __version__
 
@@ -129,17 +129,17 @@ def main():
     ar_prs.add_argument("--db-file",
                         help="Using log DB_FILE instead of db_file of [result log] section in the config file.")
     ar_prs.add_argument("--ptvsd-secret", help=SUPPRESS)
+    ar_prs.add_argument('dummay_entry', nargs='?', help=SUPPRESS)
 
     args = ar_prs.parse_args()
     if args.ptvsd_secret is not None:
-        from socket import gethostname
-        from socket import gethostbyname
+        from socket import gethostname, gethostbyname
         import ptvsd
         hostname = gethostname()
         hostname_addr = [hostname, gethostbyname(hostname)]
         for info in hostname_addr:
             print('tcp://{0}@{1}:5678'.format(args.ptvsd_secret, info))
-        ptvsd.enable_attach(args.ptvsd_secret)
+        ptvsd.enable_attach(address=(hostname, 5678))
         ptvsd.wait_for_attach()
 
     if "help" in args:
