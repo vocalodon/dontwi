@@ -45,7 +45,7 @@ dontwi gets hashtag timeline each run using Mastodon API. When it finds statuses
 
 Next, it takes the oldest status from the log DB, posts the status to Twitter by API. It appends the contributor's address on Mastodon and ``#don_tw`` hashtag to the status. Also, it brings attached media files [#f1]_ which is shrunk for Twitter if the resolution exceeds Twitter's specifications.
 
-All of the contents that are text, link address, and hashtag are kept if the number of characters is within 280, which is the limit of Twitter. When the length exceeds the limit, dontwi trims text without modification link and hashtag as much as possible.
+All of the contents that are text, link address, and hashtag are kept if the number of characters is within 280, which is the limit of Twitter. When the length exceeds the limit, dontwi trims text without modification link and hashtag as much as possible. dontwi can also split status text and post as a thread(v1.1.0 or later).
 
 ``#don_tw`` hashtag appended to the post to Twitter is not configurable. The reason why is aiming to organize federation timeline like Mastodon's one on Twitter by this fixed hashtag. If you want to use another hashtag, you can do by modification to source code directory. However, we hope you keep this hashtag for the federation timeline on Twitter.
 
@@ -147,6 +147,12 @@ It is better not to write comments because of dontwi deletes these when saving M
     Set Twitter API key and related parameters. dontwi uses Twython_ library to access to Twitter. Please refer Twython's documents to obtain these keys.  
 
 .. _Twython: https://github.com/ryanmcgrath/twython
+
+``message_length``
+    Max character length at trimming message text. The default is 280.
+
+ ``post_mode``
+   ``single``(default) or ``thread`` can be selected. In ``single`` case, dontwi posts trimmed status text within ``message_length`` characters. In ``thread`` case, it splits status text by ``message_length`` characters and post as a thread.
 
 ``result log`` section
 ++++++++++++++++++++++
