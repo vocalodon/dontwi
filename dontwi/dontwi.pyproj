@@ -4,22 +4,23 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>451029b4-2c38-4306-bb42-5fdb038983b7</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>
-    </StartupFile>
-    <SearchPath>
-    </SearchPath>
+    <StartupFile>__main__.py</StartupFile>
+    <SearchPath>.</SearchPath>
     <WorkingDirectory>..</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>dontwi</Name>
     <RootNamespace>dontwi</RootNamespace>
     <IsWindowsApplication>False</IsWindowsApplication>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
-    <CommandLineArguments>-m dontwi</CommandLineArguments>
+    <CommandLineArguments>
+    </CommandLineArguments>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
     <InterpreterId>Global|PythonCore|3.4</InterpreterId>
     <Environment>
     </Environment>
-    <PublishUrl>ftps://192.168.1.7/pub/</PublishUrl>
+    <PublishUrl>ftps://192.168.1.7/pub</PublishUrl>
+    <InterpreterArguments>
+    </InterpreterArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -36,7 +37,7 @@
     <Compile Include="connector.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="dontwi.py" />
+    <Compile Include="_dontwi.py" />
     <Compile Include="exception.py">
       <SubType>Code</SubType>
     </Compile>
