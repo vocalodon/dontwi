@@ -90,6 +90,7 @@ You should place the configuration file ``dontwi.ini`` to ``/etc``. Search paths
     oauth_token = 
     oauth_token_secret = 
     message_length = 280
+    post_mode = single
 
     [result log]
     db_file = /var/db/dontwi_log.db
