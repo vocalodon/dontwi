@@ -124,20 +124,26 @@ class StatusText(object):
         return " "
 
     def trim_text(self, status_str):
-        limit_len = self.config.getint("message_length", 280)
+        limit_len = self.config.getint("message_length", fallback=280)
         marked_parts, char_count = self.slice_content_and_count_len(status_str)
         remain_capacity = limit_len - char_count
         if remain_capacity < 0:
             marked_parts.reverse()
+            is_required_delimiter = False
             for a_phrase in marked_parts:
                 if a_phrase.text_type is TextType.WORDS:
                     assert a_phrase.text
                     len_phrase = self.weighted_length(a_phrase.text)
-                    if len_phrase + remain_capacity < 1:
-                        a_phrase.text = self.get_delimiter(a_phrase.text)
-                        remain_capacity += len_phrase - 1
+                    if len_phrase + remain_capacity <= 0:
+                        if is_required_delimiter:
+                            a_phrase.text = self.get_delimiter(a_phrase.text)
+                            remain_capacity += len_phrase - len(a_phrase.text)
+                            is_required_delimiter = False
+                        else:
+                            a_phrase.text = ""
+                            remain_capacity += len_phrase
                     else:
-                        to_be_left = ''
+                        to_be_left = ""
                         index = None
                         for index, codepoint in enumerate(a_phrase.text):
                             weight = self.codepoint_weight(codepoint)
@@ -149,6 +155,10 @@ class StatusText(object):
                         delimiter = self.get_delimiter(a_phrase.text[index:])
                         a_phrase.text = to_be_left + delimiter
                         remain_capacity = 0
+                else:
+                    is_required_delimiter = True
+                if remain_capacity >= 0:
+                    break
             marked_parts.reverse()
             if remain_capacity < 0:
                 return None
@@ -163,7 +173,7 @@ class StatusText(object):
 
     def slice_text(self, header, marked_parts):
         """ Split the text of status every 280 characters """
-        limit_len = self.config.getint("message_length", 280)
+        limit_len = self.config.getint("message_length", fallback=280)
         length = 0
         text = ''
         header_tail = SplitedText('#{0}\n'.format(self.federation_hashtag), TextType.HASHTAG)
@@ -203,7 +213,7 @@ class StatusText(object):
             result = "{0} #{1}"\
                      .format(toot.status["spoiler_text"],
                              self.federation_hashtag)
-        if not self.config.getboolean("attach_media_url", True):
+        if not self.config.getboolean("attach_media_url", fallback="no"):
             result = self.remove_media_url(result, toot)
         result = self.replace_trigger_tag(result, hashtag)
         result = self.trunc_redundant_line_break(result)
@@ -220,7 +230,7 @@ class StatusText(object):
             result = "{0} #{1}"\
                      .format(toot.status["spoiler_text"],
                              self.federation_hashtag)
-        if not self.config.getboolean("attach_media_url", True):
+        if not self.config.getboolean("attach_media_url", fallback="no"):
             result = self.remove_media_url(result, toot)
         result = self.replace_trigger_tag(result, hashtag)
         result = self.trunc_redundant_line_break(result)
