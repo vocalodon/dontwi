@@ -20,7 +20,7 @@ Its aim is communication with Mastodon users and the Twitter's follers. This ide
 Features
 --------
 
-- dontwi supports Python 3.4 and higher on CentOS 7.4 and Windows 10.
+- dontwi supports Python 3.4 and higher on CentOS 7.4, Ubuntu 16.04 and Windows 10.
 - Efficiently to use with ``cron``. It transports only one status each run. 
 - Statues with the specified tag in Mastodon public local timeline are transferred.
 - Long text in Mastodon status is truncated to fit for Twitter.

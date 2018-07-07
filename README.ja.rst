@@ -27,7 +27,7 @@ Twitterに投稿する際にはMastodonにおけるユーザー名と ``#don_tw`
 特徴
 --------
 
-- dontwi は Python 3.4 以上， CentOS 7.4および Windows 10をサポートします．
+- dontwi は Python 3.4 以上， CentOS 7.4および Ubuntu 16.04，Windows 10をサポートします．
 - ``cron`` と共に使うと便利です．起動毎に1つのstatusを転送します. 
 - 指定されたハッシュタグを持つstatusを公開ローカルタイムラインから見つけて転送を行います．
 - Mastodonに投稿された長いテキストはTwitterの制限に合わせて切り詰めまれます．
