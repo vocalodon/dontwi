@@ -26,6 +26,8 @@ class ResultLog(object):
                 version_str = app_info[0]['version'] if app_info else '0'
                 if version.parse(version_str) < version.parse('1.0'):
                     self.migrate_to_1_0(db_entity)
+                if version.parse(version_str) < version.parse('1.1'):
+                    self.__set_info(db_entity)
 
     @staticmethod
     def __get_info_table(db_entity):
