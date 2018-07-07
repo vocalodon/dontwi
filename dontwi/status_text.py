@@ -45,7 +45,7 @@ class StatusText(object):
     def codepoint_weight(codepoint):
         return 1 if ord(codepoint) < 0x1100 else 2  # quick hack
         # U+1100-11FF is Hangul Jamo
-                                                          # block
+        # block
 
     def weighted_length(self, text):
         weighted_length = sum([self.codepoint_weight(codepoint)
