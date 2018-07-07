@@ -12,15 +12,13 @@
     <RootNamespace>dontwi</RootNamespace>
     <IsWindowsApplication>False</IsWindowsApplication>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
-    <CommandLineArguments>
-    </CommandLineArguments>
+    <CommandLineArguments>--help</CommandLineArguments>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
-    <InterpreterId>Global|PythonCore|3.4</InterpreterId>
+    <InterpreterId>Global|PythonCore|3.6</InterpreterId>
     <Environment>
     </Environment>
     <PublishUrl>ftps://192.168.1.7/pub</PublishUrl>
-    <InterpreterArguments>
-    </InterpreterArguments>
+    <InterpreterArguments>-mdontwi</InterpreterArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -67,6 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="Global|PythonCore|3.4" />
+    <InterpreterReference Include="Global|PythonCore|3.6" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

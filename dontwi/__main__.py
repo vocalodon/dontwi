@@ -129,7 +129,6 @@ def main():
     ar_prs.add_argument("--db-file",
                         help="Using log DB_FILE instead of db_file of [result log] section in the config file.")
     ar_prs.add_argument("--ptvsd-secret", help=SUPPRESS)
-    ar_prs.add_argument('dummay_entry', nargs='?', help=SUPPRESS)
 
     args = ar_prs.parse_args()
     if args.ptvsd_secret is not None:
@@ -139,7 +138,7 @@ def main():
         hostname_addr = [hostname, gethostbyname(hostname)]
         for info in hostname_addr:
             print('tcp://{0}@{1}:5678'.format(args.ptvsd_secret, info))
-        ptvsd.enable_attach(address=(hostname, 5678))
+        ptvsd.enable_attach(args.ptvsd_secret)
         ptvsd.wait_for_attach()
 
     if "help" in args:
