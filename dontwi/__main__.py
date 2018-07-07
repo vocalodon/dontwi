@@ -5,9 +5,10 @@
 import json
 from argparse import SUPPRESS, ArgumentParser
 from pprint import pprint
-
+from itertools import tee
 from dontwi.config import Config
 from dontwi._dontwi import Dontwi
+from dontwi.status_text import StatusText
 from dontwi.result_log import ResultLog
 from dontwi.version import __version__
 
