@@ -72,9 +72,7 @@ class TestConnector(unittest.TestCase):
             status_by_ts = next(statuses_by_ts)
             status_st_by_ts = status_text.make_tweet_string_from_toot(
                 status_by_ts, hashtag=hashtag) if status_by_ts is not None else None
-            self.assertEqual(test_id_status_st[a_id][1],
-                             status_st_by_id,
-                             status_st_by_ts)
+            self.assertEqual(status_st_by_id, status_st_by_ts)
 
     @unittest.skipUnless(YOUR_MASTODON_FQDN,
                          'YOUR_MASTODON_FQDN isn\'t defined')

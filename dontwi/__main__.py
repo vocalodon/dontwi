@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 """ Entry point module
 """
+import os
 import json
 from argparse import SUPPRESS, ArgumentParser
 from pprint import pprint

@@ -5,7 +5,8 @@
     <ProjectGuid>451029b4-2c38-4306-bb42-5fdb038983b7</ProjectGuid>
     <ProjectHome>.</ProjectHome>
     <StartupFile>__main__.py</StartupFile>
-    <SearchPath>.</SearchPath>
+    <SearchPath>
+    </SearchPath>
     <WorkingDirectory>..</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>dontwi</Name>
@@ -14,7 +15,7 @@
     <LaunchProvider>Standard Python launcher</LaunchProvider>
     <CommandLineArguments> --dry-run</CommandLineArguments>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
-    <InterpreterId>Global|PythonCore|3.6</InterpreterId>
+    <InterpreterId>Global|PythonCore|3.5</InterpreterId>
     <Environment>
     </Environment>
     <PublishUrl>ftps://192.168.1.7/pub</PublishUrl>
@@ -58,15 +59,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="tests\__init__.py" />
-    <Compile Include="__main__.py" />
+    <None Include="__main__.py" />
     <Compile Include="__init__.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="tests\" />
   </ItemGroup>
   <ItemGroup>
-    <InterpreterReference Include="Global|PythonCore|3.4" />
-    <InterpreterReference Include="Global|PythonCore|3.6" />
+    <InterpreterReference Include="Global|PythonCore|3.5" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

@@ -106,7 +106,7 @@ class MastodonConnector(IConnector):
         statuses = []
         for a_hashtag in [hashtag, StatusText.federation_hashtag]:
             statuses += self.mastodon.timeline_hashtag(
-                hashtag=a_hashtag, local=False, max_id=max_id, since_id=since_id, limit=limit)
+                hashtag=a_hashtag, local=True, max_id=max_id, since_id=since_id, limit=limit)
         statuses.sort(key=lambda status: status["id"], reverse=True)
         return statuses
 
