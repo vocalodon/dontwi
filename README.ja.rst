@@ -66,7 +66,7 @@ Twitterに投稿される際に付記されるハッシュタク ``#don_tw`` は
 
 pip3を用いてこのレポジトリにあるパッケージを簡単にインストールすることができます::
 
-    pip3 install https://github.com/vocalodon/dontwi/releases/download/v1.0.0/dontwi-1.0-py3-none-any.whl
+    pip3 install https://github.com/vocalodon/dontwi/releases/download/v1.1.1/dontwi-1.1.1-py3-none-any.whl
 
 ``setup.py`` を用いてローカルのレポジトリからインストールすることもできます::
 
